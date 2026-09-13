@@ -1,10 +1,13 @@
+import React from 'react'
 import appIcon from '../assets/app-icon.svg'
 import { APP, type ReleaseInfo } from '../app'
 import { useI18n } from '../i18n'
 import { AppleMark, GitHubMark } from './icons'
 
-/** 首屏：品牌 + 一句话定位 + 下载入口。 */
-export function Hero({ release }: { release: ReleaseInfo }) {
+/** 首屏：品牌 + 一句话定位 + 下载入口。
+ *  用 memo 包住：status（图标状态）由页面根持有，控制台滑杆每动一格都会让根重渲染，
+ *  而 Hero 只依赖 release —— memo 把这些与它无关的更新挡在外面。 */
+export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo }) {
   const { t } = useI18n()
   const h = t.hero
 
@@ -50,4 +53,4 @@ export function Hero({ release }: { release: ReleaseInfo }) {
       <p className="hero-note">{h.disclaimer}</p>
     </section>
   )
-}
+})

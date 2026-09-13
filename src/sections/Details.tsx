@@ -1,10 +1,13 @@
+import React from 'react'
 import { APP, type ReleaseInfo } from '../app'
 import { useI18n } from '../i18n'
 import { AlertMark, AppleMark, DownloadMark, GitHubMark } from './icons'
 import { Troubleshoot } from './Troubleshoot'
 
-/** 隐私说明 + 系统要求（含下载收尾）+ 页脚。 */
-export function Details({ release }: { release: ReleaseInfo }) {
+/** 隐私说明 + 系统要求（含下载收尾）+ 页脚。
+ *  用 memo 包住：子树最重（内含 Troubleshoot 的两张排障卡片），而它只依赖 release，
+ *  不该跟着控制台滑杆的高频更新一起 reconcile。 */
+export const Details = React.memo(function Details({ release }: { release: ReleaseInfo }) {
   const { t } = useI18n()
 
   return (
@@ -83,4 +86,4 @@ export function Details({ release }: { release: ReleaseInfo }) {
       </footer>
     </>
   )
-}
+})

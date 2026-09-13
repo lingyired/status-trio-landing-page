@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { RELEASE_FALLBACK, fetchLatestRelease, type ReleaseInfo } from '../app'
 import { DEFAULT_STATUS, type StatusIconState } from '../status/StatusIcon'
 import { MacMenuBar } from '../stage/MacMenuBar'
@@ -6,9 +6,7 @@ import { Hero } from '../sections/Hero'
 import { Playground } from '../sections/Playground'
 import { Features } from '../sections/Features'
 import { Details } from '../sections/Details'
-import { applyTheme, getThemePref, type ThemePref } from '../theme'
-import wallpaperDark from '../assets/wallpaper/dark.webp'
-import wallpaperLight from '../assets/wallpaper/light.webp'
+import { applyTheme, getThemePref, WALLPAPER, type ThemePref } from '../theme'
 import '../styles/tokens.css'
 import '../styles/landing.css'
 
@@ -60,14 +58,16 @@ export function LandingPage() {
     desktopRef.current?.querySelector('#playground')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
 
+  // 滚动阈值：只在跨越 2px 时改动 state。函数式 updater 返回同一个值，
+  // React 会直接 bailout 掉这次更新，所以滚动过程中不会有多余的渲染。
   const onDesktopScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrolled(e.currentTarget.scrollTop > 2)
+    const next = e.currentTarget.scrollTop > 2
+    setScrolled((prev) => (prev === next ? prev : next))
   }, [])
 
-  const wallpaper = useMemo(
-    () => (theme === 'light' ? wallpaperLight : wallpaperDark),
-    [theme],
-  )
+  // 壁纸 URL 在 public/ 里是固定路径，直接查表；主题切换时改 src，
+  // 此时另一张图已在缓存中（首帧的 preload 只预热当前主题那张）。
+  const wallpaper = WALLPAPER[theme]
 
   return (
     <div className="lp-stage">

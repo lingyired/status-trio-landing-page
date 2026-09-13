@@ -3,6 +3,39 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      首帧主题 + 壁纸预加载。这段脚本刻意不依赖打包产物：
+
+      整站是 CSR，若等 React bundle（260 KB）落地后才设主题，首帧会按错误的色阶绘制；
+      更要紧的是壁纸——它以前是 `import` 进 JS 再交给 <img> 渲染的，浏览器必须等 JS
+      下载 + 执行 + React 渲染出 DOM 才知道图片地址，图片请求白白晚一整段（二次瀑布）。
+      放在这里之后：主题在样式表生效前落定，壁纸与 260 KB JS 并行下载，LCP 不再挂在 JS 后面。
+
+      ⚠️ 判定口径与 src/theme.ts 的 getThemePref / WALLPAPER 是同一套，改一边必须同步另一边。
+    -->
+    <script>
+      (function () {
+        var pref = 'dark'
+        try {
+          var stored = localStorage.getItem('status-trio.landing.theme')
+          if (stored === 'dark' || stored === 'light') pref = stored
+          else if (window.matchMedia('(prefers-color-scheme: light)').matches) pref = 'light'
+        } catch (err) {
+          /* 隐私模式下 localStorage 不可读，保持默认 dark */
+        }
+        var root = document.documentElement
+        root.dataset.theme = pref
+        root.style.colorScheme = pref
+        var link = document.createElement('link')
+        link.rel = 'preload'
+        link.as = 'image'
+        link.setAttribute('fetchpriority', 'high')
+        link.href = './wallpaper/' + pref + '.webp'
+        document.head.appendChild(link)
+      })()
+    </script>
+    <!-- 版本号来自 GitHub API：提前建连，省掉一次 DNS + TLS 往返 -->
+    <link rel="preconnect" href="https://api.github.com" crossorigin />
     <meta
       name="description"
       content="Status Trio 把 Wi-Fi、电池和音量合并成一个菜单栏图标。原生 Swift 写的 macOS 小工具，不联网、不含遥测。"

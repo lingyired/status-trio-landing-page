@@ -1,9 +1,24 @@
 /** Landing page 主题偏好：dark（默认）/ light，写入 <html data-theme>，localStorage 持久化。
- *  与 fund01 landing 的做法一致：在 React 挂载前同步应用，避免第一帧按亮色绘制。 */
+ *
+ *  首帧主题由 index.html 里的内联脚本负责（不依赖打包产物，在样式表生效前落定）。
+ *  这里保留同一套判定逻辑，供 React 侧读取与切换主题使用；两者必须保持口径一致。 */
 
 export type ThemePref = 'dark' | 'light'
 
+/** localStorage 键。⚠️ index.html 里的内联主题脚本也硬编码了这个字符串，
+ *  两边必须一起改，否则「首帧主题」和「React 侧主题」会不一致。 */
 const STORAGE_KEY = 'status-trio.landing.theme'
+
+/** 壁纸 URL。刻意走 public/ 而不是 `import`：
+ *  - `import` 会把它挂进 JS 依赖图，浏览器要等 260 KB JS 下载 + 执行 + React 渲染
+ *    出 <img> 之后才知道图片地址，图片请求平白晚了一整段（二次请求瀑布）；
+ *  - 放进 public/ 后文件名不参与打包哈希，index.html 的内联脚本能在首帧前
+ *    直接 <link rel=preload>，图片与 JS 并行下载。
+ *  ⚠️ 这两个路径同样被 index.html 的内联脚本引用，改目录要一起改。 */
+export const WALLPAPER: Record<ThemePref, string> = {
+  dark: './wallpaper/dark.webp',
+  light: './wallpaper/light.webp',
+}
 
 function readStored(): ThemePref | null {
   try {
@@ -38,7 +53,8 @@ export function applyTheme(pref: ThemePref): void {
   if (meta) meta.setAttribute('content', pref === 'light' ? '#dfe7f2' : '#141b28')
 }
 
-/** React 挂载前调用：先把主题写到 DOM，避免白闪。 */
+/** React 挂载前调用。首帧主题已由 index.html 的内联脚本落定，这里是一次幂等的
+ *  重放（结果必然相同），负责把偏好持久化并同步 theme-color。 */
 export function initTheme(): ThemePref {
   const pref = getThemePref()
   applyTheme(pref)

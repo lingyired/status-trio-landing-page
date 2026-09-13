@@ -1,0 +1,100 @@
+/** StatusIcon 的绘制规则。颜色全部走 CSS 变量，父级只要改 `color`（→ --sti-ink）
+ *  以及主题里的 --sti-value / --sti-value-shadow，图标就能适配菜单栏深浅。 */
+
+.sti {
+  display: block;
+  flex: none;
+  overflow: visible;
+  --sti-ink: currentColor;
+  /* 未点亮的弧 / 圆点：把前景色压到 30% 透明度，深浅两种菜单栏下都成立 */
+  --sti-muted: color-mix(in srgb, var(--sti-ink) 30%, transparent);
+  --sti-critical: #ff3b30;
+  --sti-warning: #f2b900;
+  --sti-charging: #34c759;
+}
+
+/* 数字与闪电的描边阴影（浅色主题下换白，见 flood-opacity 覆盖） */
+.sti .sti-value-shadow {
+  flood-color: var(--sti-value-shadow);
+  flood-opacity: 0.38;
+}
+
+[data-theme='light'] .sti .sti-value-shadow {
+  flood-opacity: 0.6;
+}
+
+.sti .sti-track {
+  stroke: var(--sti-muted);
+}
+
+/* 填充弧的 dasharray 永远是两段（见 StatusIcon.tsx 的 gap/mask 注释），
+   所以这里的过渡是安全的：只会等比伸缩，不会再插值出多余的虚线段。 */
+.sti .sti-fill {
+  stroke: var(--sti-battery);
+  transition:
+    stroke 240ms ease,
+    stroke-dasharray 260ms ease,
+    opacity 140ms ease;
+}
+
+.sti .sti-value,
+.sti .sti-bolt {
+  fill: var(--sti-value);
+  transition: opacity 180ms ease;
+}
+
+/* ── Wi-Fi ── */
+.sti .sti-wifi-signal {
+  transition: opacity 220ms ease;
+}
+
+.sti .sti-wifi-signal [data-index] {
+  transition:
+    stroke 260ms ease,
+    fill 260ms ease,
+    opacity 260ms ease;
+}
+
+.sti .sti-wifi-signal [data-index].is-muted {
+  stroke: var(--sti-muted);
+}
+
+/* 中心那个实心点用 fill 着色，需要单独压暗（且要盖掉上一行的 stroke 规则） */
+.sti .sti-wifi-signal [data-index='3'].is-muted {
+  stroke: none;
+  fill: var(--sti-muted);
+}
+
+.sti .sti-wifi-off {
+  stroke: var(--sti-muted);
+}
+
+.sti .sti-wifi-overlays > [data-state] {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.sti .sti-wifi[data-state='off'] .sti-wifi-overlays > [data-state='off'],
+.sti .sti-wifi[data-state='noInternet'] .sti-wifi-overlays > [data-state='noInternet'],
+.sti .sti-wifi[data-state='hotspot'] .sti-wifi-overlays > [data-state='hotspot'],
+.sti .sti-wifi[data-state='temporary'] .sti-wifi-overlays > [data-state='temporary'],
+.sti .sti-wifi[data-state='shared'] .sti-wifi-overlays > [data-state='shared'] {
+  opacity: 1;
+}
+
+.sti .sti-wifi-overlays [data-state='noInternet'] {
+  stroke: var(--sti-muted);
+}
+
+.sti .sti-wifi-overlays [data-state='noInternet'] circle {
+  fill: var(--sti-muted);
+}
+
+/* ── 音量（四段通用指示器）── */
+.sti .sti-level [data-index] {
+  transition: fill 260ms ease;
+}
+
+.sti .sti-level [data-index].is-muted {
+  fill: var(--sti-muted);
+}

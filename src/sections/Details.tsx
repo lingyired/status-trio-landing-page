@@ -1,0 +1,86 @@
+import { APP, type ReleaseInfo } from '../app'
+import { useI18n } from '../i18n'
+import { AlertMark, AppleMark, DownloadMark, GitHubMark } from './icons'
+import { Troubleshoot } from './Troubleshoot'
+
+/** 隐私说明 + 系统要求（含下载收尾）+ 页脚。 */
+export function Details({ release }: { release: ReleaseInfo }) {
+  const { t } = useI18n()
+
+  return (
+    <>
+      <section className="sec" id="privacy">
+        <header className="sec-head">
+          <p className="sec-eyebrow">{t.privacy.eyebrow}</p>
+          <h2 className="sec-title">{t.privacy.title}</h2>
+        </header>
+        <ul className="bullets card">
+          {t.privacy.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="sec" id="requirements">
+        <header className="sec-head">
+          <p className="sec-eyebrow">{t.requirements.eyebrow}</p>
+          <h2 className="sec-title">{t.requirements.title}</h2>
+        </header>
+
+        <div className="req card">
+          <ul className="req-list">
+            {t.requirements.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+
+          <p className="req-source-hint">{t.requirements.sourceHint}</p>
+          <pre className="req-code">
+            <code>{t.requirements.sourceCmd}</code>
+          </pre>
+        </div>
+
+        <div className="req-cta">
+          <a className="btn btn--primary btn--lg" href={release.dmg} target="_blank" rel="noreferrer">
+            <AppleMark size={16} />
+            <span className="btn-body">
+              <span className="btn-main">{t.requirements.cta}</span>
+              <span className="btn-sub">
+                {release.tag} · {t.requirements.ctaSub} · {release.size}
+              </span>
+            </span>
+          </a>
+          <a className="req-all" href={APP.releases} target="_blank" rel="noreferrer">
+            <DownloadMark size={14} /> {t.hero.ctaAll}
+          </a>
+          <a className="req-trouble" href="#troubleshoot">
+            <AlertMark size={14} /> {t.troubleshoot.navHint}
+          </a>
+        </div>
+      </section>
+
+      <Troubleshoot />
+
+      <footer className="lp-footer">
+        <div className="lp-footer-left">
+          <a className="lp-footer-link" href={APP.repo} target="_blank" rel="noreferrer">
+            <GitHubMark size={14} /> {t.footer.links.repo}
+          </a>
+          <a className="lp-footer-link" href={APP.releases} target="_blank" rel="noreferrer">
+            {t.footer.links.releases}
+          </a>
+          <a className="lp-footer-link" href={APP.site} target="_blank" rel="noreferrer">
+            {t.footer.links.site}
+          </a>
+        </div>
+        <p className="lp-footer-note">
+          {t.footer.note}
+          <span className="lp-footer-sep">·</span>
+          <a className="lp-footer-link lp-footer-link--plain" href={APP.author} target="_blank" rel="noreferrer">
+            {t.footer.madeBy}
+          </a>
+        </p>
+      </footer>
+    </>
+  )
+}

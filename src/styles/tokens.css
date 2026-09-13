@@ -1,0 +1,138 @@
+/** 设计变量 + 基础重置。
+ *  深色是默认值，浅色在 [data-theme='light'] 下覆盖；<html data-theme> 由 theme.ts 写入。 */
+
+:root {
+  color-scheme: dark;
+
+  --ink: #f4f5f7;
+  --ink-muted: rgba(244, 245, 247, 0.68);
+  --ink-dim: rgba(244, 245, 247, 0.5);
+
+  /* 内容区上方的压暗层：壁纸留个气氛，但保证文字对比度 */
+  --scrim-strong: rgba(9, 11, 19, 0.76);
+  --scrim-soft: rgba(9, 11, 19, 0.52);
+
+  --card-bg: rgba(23, 27, 35, 0.6);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 22px 56px rgba(0, 0, 0, 0.42);
+
+  --menubar-bg: rgba(22, 26, 34, 0.7);
+  --menubar-solid: rgba(21, 25, 33, 0.95);
+  --menubar-fg: rgba(255, 255, 255, 0.9);
+  --menubar-fg-dim: rgba(255, 255, 255, 0.56);
+  --menubar-hover: rgba(255, 255, 255, 0.14);
+  --menubar-line: rgba(255, 255, 255, 0.08);
+  --menubar-app-bg: rgba(128, 148, 190, 0.22);
+
+  --field-bg: rgba(255, 255, 255, 0.06);
+  --field-border: rgba(255, 255, 255, 0.14);
+  --field-fg: rgba(255, 255, 255, 0.92);
+  --track: rgba(255, 255, 255, 0.2);
+  --seg-active-bg: rgba(255, 255, 255, 0.15);
+  --seg-active-shadow: 0 1px 3px rgba(0, 0, 0, 0.34);
+
+  --accent: #0a84ff;
+  --accent-hover: #3395ff;
+  --accent-ink: #ffffff;
+  --focus: rgba(10, 132, 255, 0.9);
+
+  /* 排障提示用的警示色 */
+  --warn: #f59e0b;
+
+  --glow: rgba(255, 255, 255, 0.1);
+  --stage-bg: #10131a;
+
+  /* StatusIcon 用到的两个颜色：数字/闪电的颜色，以及它的描边阴影 */
+  --sti-value: #ffffff;
+  --sti-value-shadow: #000000;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --ink: #1a1c21;
+  --ink-muted: rgba(26, 28, 33, 0.68);
+  --ink-dim: rgba(26, 28, 33, 0.52);
+
+  --scrim-strong: rgba(246, 249, 254, 0.8);
+  --scrim-soft: rgba(246, 249, 254, 0.56);
+
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(20, 24, 32, 0.1);
+  --card-shadow: 0 16px 42px rgba(22, 34, 56, 0.14);
+
+  --menubar-bg: rgba(247, 249, 252, 0.76);
+  --menubar-solid: rgba(250, 251, 253, 0.96);
+  --menubar-fg: rgba(24, 28, 36, 0.92);
+  --menubar-fg-dim: rgba(24, 28, 36, 0.55);
+  --menubar-hover: rgba(0, 0, 0, 0.07);
+  --menubar-line: rgba(20, 24, 32, 0.1);
+  --menubar-app-bg: rgba(90, 120, 180, 0.16);
+
+  --field-bg: rgba(255, 255, 255, 0.86);
+  --field-border: rgba(20, 24, 32, 0.14);
+  --field-fg: rgba(24, 28, 36, 0.94);
+  --track: rgba(20, 24, 32, 0.16);
+  --seg-active-bg: #ffffff;
+  --seg-active-shadow: 0 1px 3px rgba(20, 24, 32, 0.18);
+
+  --accent: #007aff;
+  --accent-hover: #1a8cff;
+  --focus: rgba(0, 122, 255, 0.9);
+
+  /* 浅色下 #f59e0b 对比度只有 2.3:1，压深到 amber-700 */
+  --warn: #b45309;
+
+  --glow: rgba(20, 28, 44, 0.1);
+  --stage-bg: #dfe7f2;
+
+  --sti-value: #1a1c21;
+  --sti-value-shadow: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  color: var(--ink);
+  background: var(--stage-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+pre,
+code {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

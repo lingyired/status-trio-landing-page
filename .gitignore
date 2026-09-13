@@ -1,0 +1,7 @@
+node_modules/
+dist/
+# 沙箱内安装依赖时用的项目本地 pnpm store（全局 store 位于沙箱外，写不进去）
+.pnpm-store/
+_tmp_*
+*.log
+.DS_Store

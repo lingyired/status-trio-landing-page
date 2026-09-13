@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Status Trio app icon">
+  <title>Status Trio app icon</title>
+  <rect x="64" y="64" width="896" height="896" rx="210" fill="#151517"/>
+  <rect x="65" y="65" width="894" height="894" rx="209" fill="none" stroke="#3A3A3D" stroke-width="2"/>
+  <g transform="translate(194.8 171.84) scale(5.6)" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15.5 88.25 A51.5 51.5 0 1 1 103.5 88.25" stroke-width="8"/>
+    <g stroke-width="7">
+      <path d="M38.5 55.5 A31 31 0 0 1 80.5 55.5"/>
+      <path d="M47 65.25 A18.5 18.5 0 0 1 72 65.25"/>
+      <path d="M59.5 69.9 C61.0 69.9 65.2 70.8 66.5 73 C66.7 73.8 66.7 74.3 66.5 75 C63.8 78.8 61.15 80.95 59.5 80.95 C57.85 80.95 55.2 78.8 52.5 75 C52.3 74.3 52.3 73.8 52.5 73 C53.8 70.8 58.0 69.9 59.5 69.9 Z" fill="#FFFFFF" stroke="none"/>
+    </g>
+  </g>
+  <g transform="translate(194.8 171.84) scale(5.6)" fill="#FFFFFF">
+    <circle cx="33" cy="104.2" r="5.5"/>
+    <circle cx="50.5" cy="111.2" r="5.5"/>
+    <circle cx="68.5" cy="111.7" r="5.5"/>
+    <circle cx="86" cy="105.8" r="5.5"/>
+  </g>
+</svg>

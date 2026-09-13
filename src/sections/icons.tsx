@@ -1,5 +1,4 @@
 import React from 'react'
-import type { FeatureIconKey } from '../copy'
 
 /** 线条图标统一规格：24×24 viewBox、圆头圆角、默认 1.7 描边，描边吃 currentColor。 */
 const stroke = {
@@ -9,43 +8,6 @@ const stroke = {
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
 } as const
-
-/** 只留产品的三个状态：电池、Wi-Fi、音量。 */
-const FEATURE_ICONS: Record<FeatureIconKey, React.ReactNode> = {
-  /** 电池 */
-  battery: (
-    <>
-      <rect x="2.5" y="7" width="16" height="10" rx="2.8" />
-      <path d="M21.2 10.6v2.8" />
-      <path d="M6.2 10.2h5.4v3.6H6.2z" fill="currentColor" stroke="none" />
-    </>
-  ),
-  /** Wi-Fi */
-  wifi: (
-    <>
-      <path d="M3.2 9.2a13 13 0 0 1 17.6 0" />
-      <path d="M6.6 13a8.4 8.4 0 0 1 10.8 0" />
-      <path d="M10 16.6a3.6 3.6 0 0 1 4 0" />
-      <circle cx="12" cy="19.6" r="1.2" fill="currentColor" stroke="none" />
-    </>
-  ),
-  /** 音量 */
-  volume: (
-    <>
-      <path d="M4 9.5h3.2L11.5 6v12L7.2 14.5H4z" />
-      <path d="M15 9.6a3.6 3.6 0 0 1 0 4.8" />
-      <path d="M18 7a7.2 7.2 0 0 1 0 10" />
-    </>
-  ),
-}
-
-export function FeatureIcon({ name }: { name: FeatureIconKey }) {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" {...stroke} aria-hidden>
-      {FEATURE_ICONS[name]}
-    </svg>
-  )
-}
 
 /** Apple logo（实心） */
 export function AppleMark({ size = 15 }: { size?: number }) {

@@ -1,8 +1,7 @@
 import React from 'react'
 import { useI18n } from '../i18n'
-import { FeatureIcon } from './icons'
 
-/** 功能列表：只留产品名里的那三个状态（电池 / Wi-Fi / 音量），一个图标配一句话。
+/** 功能：只剩一句话 —— 一个图标三个状态（Wi-Fi、电池、音量）。
  *  无 props → memo 之后只在语言切换时重渲染，图标状态怎么变都跟它无关。 */
 export const Features = React.memo(function Features() {
   const { t } = useI18n()
@@ -12,19 +11,8 @@ export const Features = React.memo(function Features() {
     <section className="sec" id="features">
       <header className="sec-head">
         <p className="sec-eyebrow">{f.eyebrow}</p>
-        <h2 className="sec-title">{f.title}</h2>
+        <h2 className="sec-title">{f.line}</h2>
       </header>
-
-      <ul className="feat-grid">
-        {f.items.map((item) => (
-          <li className="feat card" key={item.icon}>
-            <span className="feat-icon">
-              <FeatureIcon name={item.icon} />
-            </span>
-            <p className="feat-text">{item.text}</p>
-          </li>
-        ))}
-      </ul>
     </section>
   )
 })

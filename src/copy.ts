@@ -11,14 +11,6 @@ export type WifiStateKey =
   | 'temporary'
   | 'shared'
 
-/** 功能列表只保留三个状态，各配一个图标 —— 这三张图标也是产品名里的「三态」。 */
-export type FeatureIconKey = 'battery' | 'wifi' | 'volume'
-
-export interface FeatureItem {
-  icon: FeatureIconKey
-  text: string
-}
-
 const zh = {
   html: {
     title: 'Status Trio · 三个系统状态，一个菜单栏图标',
@@ -78,23 +70,10 @@ const zh = {
     shared: '正在共享互联网',
   } satisfies Record<WifiStateKey, string>,
 
+  /** 功能：只剩一句话 —— 一个图标三个状态，也就是产品名里的「三态」 */
   features: {
     eyebrow: '功能',
-    title: '不多不少，就做这几件事。',
-    items: [
-      {
-        icon: 'battery',
-        text: '电量、充没充电、低电量模式，一眼看清。',
-      },
-      {
-        icon: 'wifi',
-        text: '信号强弱、连的是哪个网络、通不通，都写着。',
-      },
-      {
-        icon: 'volume',
-        text: '输出音量和静音状态，弹层里顺手就能调。',
-      },
-    ] satisfies FeatureItem[],
+    line: '一个图标三个状态：Wi-Fi、电池、音量',
   },
 
   privacy: {
@@ -225,21 +204,7 @@ const en: Copy = {
 
   features: {
     eyebrow: 'Features',
-    title: 'It does a few things, and only well.',
-    items: [
-      {
-        icon: 'battery',
-        text: 'Percentage, charging, and Low Power Mode, all at a glance.',
-      },
-      {
-        icon: 'wifi',
-        text: 'Signal strength, the network you are on, and whether it reaches the internet.',
-      },
-      {
-        icon: 'volume',
-        text: 'Output level and mute state, adjustable right from the popover.',
-      },
-    ],
+    line: 'One icon, three statuses: Wi-Fi, battery, volume',
   },
 
   privacy: {

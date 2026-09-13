@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, type RefObject } from 'react'
 import { SettingsPanel } from './SettingsPanel'
 import type { StatusIconState } from '../status/StatusIcon'
 
@@ -20,6 +20,13 @@ const TRAVEL = 320
  *  得滚到卡片顶天立地才并排，用户停在中途就只看见面板还挂在顶上。 */
 const LOCK_DEPTH = 340
 
+/** 并排时首屏与面板之间的横向留白 */
+const HERO_GAP = 28
+
+/** 并排要求首屏至少还有这么宽。再窄首屏会被挤成一条、比不并排更难看，
+ *  那就退回「占位槽占高度、首屏排在面板下面」的老布局。 */
+const MIN_HERO_W = 380
+
 interface Props {
   open: boolean
   state: StatusIconState
@@ -40,14 +47,18 @@ interface Props {
  * - **停靠**：钉在菜单栏正下方，面板中心对准菜单栏图标（贴边时靠尖角指回去）；
  * - **落位**：滚到「菜单栏实际尺寸」卡片时滑进它右侧的槽位，往后就跟着卡片一起滚，
  *   回到顶部再反向滑回来。
- * 它在文档流里占位（高度 = 面板实测高度 + 间距），所以一进页面不会压住正文。
- * 窄屏下（见 landing.css）退回普通文档流、落位关掉，避免钉住以后遮掉大半屏。
+ * 它在文档流里的占位分两种（见 sync 的第 ③ 步）：
+ * - **并排**（宽屏、面板左边的空档够放首屏）：占位槽高度写 0，首屏顶到内容列最上面、
+ *   与面板顶端齐平，首屏只占左侧那条空档（宽度由 --hero-w 交给 CSS）；
+ * - **占位**（窄窗口 / 窄屏）：槽高 = 面板实测高度 + 间距，首屏排在面板下面，不会被压住。
+ * 窄屏下（见 landing.css）面板退回普通文档流、落位关掉，避免钉住以后遮掉大半屏。
  */
 export function SettingsDock({ open, state, onChange, anchorRef, slotRef, onWidth, onHeight }: Props) {
   const dockRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
   const caretRef = useRef<HTMLSpanElement>(null)
-  const [panelHeight, setPanelHeight] = useState(0)
+  /** 上一次「并排 / 占位」的落定结果。没有它的话下面这段每帧都会被叫醒、反复写同样的样式。 */
+  const liftKeyRef = useRef('')
 
   /**
    * 量一次几何、摆一次位置。全程只读几何再统一写样式——读写交错会逼浏览器反复重排。
@@ -102,6 +113,12 @@ export function SettingsDock({ open, state, onChange, anchorRef, slotRef, onWidt
       y = (slot.top - dockY) * t
     }
 
+    // ③ 首屏跟面板并排：面板浮在右上，首屏顶到内容列最上面、只占它左边的空档，
+    //    于是「Status Trio / macOS 菜单栏小工具」那一行跟面板顶端基本齐平。
+    //    空档不够宽（窄窗口 / 窄屏）就不并排，退回「占位槽占高度、首屏排在面板下面」。
+    const freeLeft = dockDx - HERO_GAP
+    const lifted = !full && freeLeft >= MIN_HERO_W
+
     // 落定之后面板随卡片滚出视野，别让它继续往屏幕外堆坐标（离屏还挂着滤镜很亏），
     // 到底了顺便摘掉可见性——否则 Tab 还能走到一堆看不见的控件上。
     const minY = -(height + TOP_GAP + 24)
@@ -114,6 +131,24 @@ export function SettingsDock({ open, state, onChange, anchorRef, slotRef, onWidt
       // 尖角相对面板左边缘；走起来就淡出——它只在停靠时负责说明「这块属于谁」
       caret.style.left = `${Math.min(Math.max(center - dockLeft - dx, CARET_INSET), width - CARET_INSET)}px`
       caret.style.opacity = String(1 - t)
+    }
+
+    // 并排 / 占位：只在这几个量真的变了才写样式。高度也走这里（不走 React 的 style prop）——
+    // 命令式写入和 re-render 会互相覆盖。占位时才占高度，并排时交给 CSS 抵消那道 gap。
+    const liftKey = `${lifted}|${lifted ? Math.round(freeLeft) : 0}|${body.dataset.open}|${height}`
+    if (liftKey !== liftKeyRef.current) {
+      const first = liftKeyRef.current === ''
+      liftKeyRef.current = liftKey
+      // 首帧还没量到尺寸时别让 260ms 的高度动画把整页内容拖着滑一下
+      if (first) dock.style.transition = 'none'
+      dock.style.height = !lifted && body.dataset.open === 'true' ? `${height + TOP_GAP}px` : '0px'
+      dock.dataset.lifted = String(lifted)
+      dock.parentElement?.style.setProperty('--hero-w', lifted ? `${freeLeft}px` : 'none')
+      if (first) {
+        requestAnimationFrame(() => {
+          dock.style.transition = ''
+        })
+      }
     }
   }, [anchorRef, slotRef])
 
@@ -162,8 +197,7 @@ export function SettingsDock({ open, state, onChange, anchorRef, slotRef, onWidt
     }
 
     // 尺寸：占位槽的高度与预览卡的等高都靠它；换语言、控件折行、断点切换时跟着变
-    const size = new ResizeObserver((entries) => {
-      for (const entry of entries) setPanelHeight(entry.contentRect.height)
+    const size = new ResizeObserver(() => {
       reportSize()
       schedule()
     })
@@ -188,8 +222,10 @@ export function SettingsDock({ open, state, onChange, anchorRef, slotRef, onWidt
     }
   }, [sync, anchorRef, reportSize])
 
+  // 高度由 sync() 按「并排 / 占位」直接写，所以这里刻意不给 style prop：
+  // React 会在下次渲染把没列出来的内联属性清掉，跟命令式写入打架。
   return (
-    <div className="pg-dock" ref={dockRef} style={{ height: open ? panelHeight + TOP_GAP : 0 }}>
+    <div className="pg-dock" ref={dockRef}>
       <div
         className="pg-dock-body"
         ref={bodyRef}

@@ -11,10 +11,12 @@ export type WifiStateKey =
   | 'temporary'
   | 'shared'
 
+/** 功能列表只保留三个状态，各配一个图标 —— 这三张图标也是产品名里的「三态」。 */
+export type FeatureIconKey = 'battery' | 'wifi' | 'volume'
+
 export interface FeatureItem {
-  icon: string
-  title: string
-  desc: string
+  icon: FeatureIconKey
+  text: string
 }
 
 const zh = {
@@ -28,7 +30,7 @@ const zh = {
   langLabel: '语言',
   themeLabel: '切换深浅主题',
   appLabel: 'Status Trio 菜单栏图标',
-  appHint: '点一下到这里调它',
+  appHint: '点一下开合设置面板',
 
   hero: {
     eyebrow: 'macOS 菜单栏小工具',
@@ -43,12 +45,9 @@ const zh = {
     disclaimer: '独立项目，与 Apple 无隶属关系。',
   },
 
-  playground: {
-    eyebrow: '试一试',
-    title: '把菜单栏上那个图标，调成你想要的样子。',
-    desc: '下面这些选项和 App 设置里的一模一样。拖动或点击，上面菜单栏里的图标会立刻跟着变。',
-    previewBarLabel: '菜单栏实际尺寸',
-    previewBarCaption: '它平时就这么小。',
+  /** 浮动设置面板（挂在菜单栏正下方）里的三组选项 */
+  settings: {
+    hint: '和 App 里的设置一模一样。菜单栏上的图标会立刻跟着变；点一下菜单栏图标就能收起来。',
     battery: '电池',
     batteryLevel: '电量',
     lowPower: '低电量模式',
@@ -60,8 +59,13 @@ const zh = {
     volume: '音量',
     none: '无',
     muted: '静音',
-    level: '格',
     lowPowerNote: '电量低于 20% 时优先显示红色。',
+  },
+
+  /** 菜单栏实际尺寸 + 放大预览（排在功能列表下面） */
+  preview: {
+    label: '菜单栏实际尺寸',
+    caption: '它平时就这么小。',
   },
 
   wifiState: {
@@ -79,49 +83,16 @@ const zh = {
     title: '不多不少，就做这几件事。',
     items: [
       {
-        icon: 'combo',
-        title: '三合一图标',
-        desc: '电池、Wi-Fi、音量只占菜单栏一个位置，不用在一排图标里找。',
-      },
-      {
-        icon: 'size',
-        title: '大小随你调',
-        desc: '20 到 32 pt 之间任选，默认 28 pt，宽一点窄一点自己拿捏。',
-      },
-      {
         icon: 'battery',
-        title: '电池状态一眼看清',
-        desc: '电量百分比、充电闪电、还有多久充满、低电量模式，点一下直达电池设置。',
+        text: '电量、充没充电、低电量模式，一眼看清。',
       },
       {
         icon: 'wifi',
-        title: 'Wi-Fi 状态不用猜',
-        desc: '信号强弱、当前网络名字、常见的几种连接状态都能显示。',
+        text: '信号强弱、连的是哪个网络、通不通，都写着。',
       },
       {
         icon: 'volume',
-        title: '音量也顺手看一眼',
-        desc: '输出音量和静音状态都在，弹层里可以直接调。',
-      },
-      {
-        icon: 'click',
-        title: '原生的 macOS 手感',
-        desc: '左键打开状态弹层，右键出标准菜单，和系统自带的一样顺手。',
-      },
-      {
-        icon: 'bolt',
-        title: '安静地更新',
-        desc: '状态变了才刷新，另有低频兜底。不需要网络权限，也没有后台小动作。',
-      },
-      {
-        icon: 'globe',
-        title: '十二种语言',
-        desc: '默认跟随系统语言，也可以手动挑一个，改完立刻生效。',
-      },
-      {
-        icon: 'login',
-        title: '登录时自动启动',
-        desc: '开机就守在菜单栏；需要你在系统设置里批准时，它会告诉你。',
+        text: '输出音量和静音状态，弹层里顺手就能调。',
       },
     ] satisfies FeatureItem[],
   },
@@ -206,7 +177,7 @@ const en: Copy = {
   langLabel: 'Language',
   themeLabel: 'Toggle light or dark appearance',
   appLabel: 'Status Trio menu bar icon',
-  appHint: 'Click to try it',
+  appHint: 'Click to show or hide the settings',
 
   hero: {
     eyebrow: 'A macOS menu bar utility',
@@ -221,12 +192,8 @@ const en: Copy = {
     disclaimer: 'Status Trio is an independent project and is not affiliated with Apple.',
   },
 
-  playground: {
-    eyebrow: 'Try it',
-    title: 'Shape the icon that sits in your menu bar.',
-    desc: 'These are the same options you get in the app\u2019s settings. Drag or click, and the icon in the menu bar above updates right away.',
-    previewBarLabel: 'Actual menu bar size',
-    previewBarCaption: 'That is how small it really is.',
+  settings: {
+    hint: 'The same options you get in the app. The menu bar icon follows along instantly — click that icon to tuck the panel away.',
     battery: 'Battery',
     batteryLevel: 'Level',
     lowPower: 'Low Power Mode',
@@ -238,8 +205,12 @@ const en: Copy = {
     volume: 'Volume',
     none: 'None',
     muted: 'Muted',
-    level: 'bars',
     lowPowerNote: 'Below 20% the arc turns red first.',
+  },
+
+  preview: {
+    label: 'Actual menu bar size',
+    caption: 'That is how small it really is.',
   },
 
   wifiState: {
@@ -257,49 +228,16 @@ const en: Copy = {
     title: 'It does a few things, and only well.',
     items: [
       {
-        icon: 'combo',
-        title: 'One combined icon',
-        desc: 'Battery, Wi-Fi, and volume share a single menu bar slot — nothing to hunt for.',
-      },
-      {
-        icon: 'size',
-        title: 'Configurable size',
-        desc: 'Anywhere from 20 to 32 pt, with 28 pt as the default. Go wider or narrower as you like.',
-      },
-      {
         icon: 'battery',
-        title: 'Battery at a glance',
-        desc: 'Percentage, charging bolt, time to full, Low Power Mode — with a shortcut into Battery Settings.',
+        text: 'Percentage, charging, and Low Power Mode, all at a glance.',
       },
       {
         icon: 'wifi',
-        title: 'Wi-Fi you can read',
-        desc: 'Signal strength, the current network name, and the connection states that actually happen.',
+        text: 'Signal strength, the network you are on, and whether it reaches the internet.',
       },
       {
         icon: 'volume',
-        title: 'Volume, one look away',
-        desc: 'Output level and mute state, both visible — and adjustable from the popover.',
-      },
-      {
-        icon: 'click',
-        title: 'Native macOS behaviour',
-        desc: 'Left-click for the status popover, right-click for the standard menu. Just like the system.',
-      },
-      {
-        icon: 'bolt',
-        title: 'Quiet updates',
-        desc: 'It refreshes when something changes, with a low-frequency fallback. No network access, no background chatter.',
-      },
-      {
-        icon: 'globe',
-        title: 'Twelve languages',
-        desc: 'Follows your system language, or pick one yourself — changes apply immediately.',
-      },
-      {
-        icon: 'login',
-        title: 'Launch at login',
-        desc: 'Be waiting in the menu bar after a restart, with guidance when macOS needs your approval.',
+        text: 'Output level and mute state, adjustable right from the popover.',
       },
     ],
   },

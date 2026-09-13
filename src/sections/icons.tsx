@@ -1,4 +1,5 @@
 import React from 'react'
+import type { FeatureIconKey } from '../copy'
 
 /** 线条图标统一规格：24×24 viewBox、圆头圆角、默认 1.7 描边，描边吃 currentColor。 */
 const stroke = {
@@ -9,25 +10,8 @@ const stroke = {
   strokeLinejoin: 'round',
 } as const
 
-const FEATURE_ICONS: Record<string, React.ReactNode> = {
-  /** 三合一：几条线收拢成一个点 */
-  combo: (
-    <>
-      <path d="M4 5h16" />
-      <path d="M6 10h12" />
-      <path d="M8.5 15h7" />
-      <circle cx="12" cy="19.4" r="1.5" />
-    </>
-  ),
-  /** 尺寸可调：对角缩放箭头 */
-  size: (
-    <>
-      <path d="M9.5 3.5H3.5v6" />
-      <path d="M14.5 20.5h6v-6" />
-      <path d="M3.5 3.5l7 7" />
-      <path d="M20.5 20.5l-7-7" />
-    </>
-  ),
+/** 只留产品的三个状态：电池、Wi-Fi、音量。 */
+const FEATURE_ICONS: Record<FeatureIconKey, React.ReactNode> = {
   /** 电池 */
   battery: (
     <>
@@ -53,39 +37,12 @@ const FEATURE_ICONS: Record<string, React.ReactNode> = {
       <path d="M18 7a7.2 7.2 0 0 1 0 10" />
     </>
   ),
-  /** 原生交互：指针 + 点击波纹 */
-  click: (
-    <>
-      <path d="M8 4.5v5" />
-      <path d="M4.6 7.2l2.6 1.4" />
-      <path d="M11.4 7.2l-2.6 1.4" />
-      <path d="M5.6 13.4l8.4 3.4-2.3 1.1-1.1 2.3z" />
-      <path d="M13.5 13.5l5 5" />
-    </>
-  ),
-  /** 安静更新：闪电 */
-  bolt: <path d="M13.4 2.8L5.6 13.2h5.2l-1 8 7.8-10.4h-5.2z" />,
-  /** 语言：地球 */
-  globe: (
-    <>
-      <circle cx="12" cy="12" r="8.6" />
-      <path d="M3.6 12h16.8" />
-      <path d="M12 3.4c2.4 2.6 3.6 5.5 3.6 8.6s-1.2 6-3.6 8.6c-2.4-2.6-3.6-5.5-3.6-8.6S9.6 6 12 3.4z" />
-    </>
-  ),
-  /** 登录时启动：电源符 */
-  login: (
-    <>
-      <path d="M12 3.6v7.8" />
-      <path d="M7.4 6.6a7.4 7.4 0 1 0 9.2 0" />
-    </>
-  ),
 }
 
-export function FeatureIcon({ name }: { name: string }) {
+export function FeatureIcon({ name }: { name: FeatureIconKey }) {
   return (
     <svg viewBox="0 0 24 24" width="20" height="20" {...stroke} aria-hidden>
-      {FEATURE_ICONS[name] ?? FEATURE_ICONS.combo}
+      {FEATURE_ICONS[name]}
     </svg>
   )
 }

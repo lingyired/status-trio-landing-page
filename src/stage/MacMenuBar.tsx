@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import { APP } from '../app'
 import { StatusIcon, type StatusIconState } from '../status/StatusIcon'
 import { useI18n } from '../i18n'
@@ -6,8 +7,12 @@ import { useTimeLabel } from './time'
 
 interface Props {
   status: StatusIconState
-  /** 点击菜单栏里的 Status Trio 图标 → 滚到控制台 */
-  onIconClick: () => void
+  /** 图标按钮本身：设置面板要靠它算对齐位置 */
+  iconRef: RefObject<HTMLButtonElement | null>
+  /** 设置面板是否展开：图标按钮据此显示按下态 */
+  settingsOpen: boolean
+  /** 点击菜单栏里的 Status Trio 图标 → 开合菜单栏下方的设置面板 */
+  onToggleSettings: () => void
   theme: ThemePref
   onToggleTheme: () => void
   /** 桌面区已滚动：给菜单栏补一条分割线，避免内容从底下透上来糊在一起 */
@@ -17,9 +22,17 @@ interface Props {
 /**
  * macOS 菜单栏：左侧 Apple logo + 应用菜单，右侧系统图标区。
  * Status Trio 的图标就长在右侧系统图标区里（和真实使用时一样），
- * 并跟随控制台的状态实时变化。
+ * 它既是状态显示，也是设置面板的开关。
  */
-export function MacMenuBar({ status, onIconClick, theme, onToggleTheme, scrolled }: Props) {
+export function MacMenuBar({
+  status,
+  iconRef,
+  settingsOpen,
+  onToggleSettings,
+  theme,
+  onToggleTheme,
+  scrolled,
+}: Props) {
   const { t, lang, toggleLang } = useI18n()
   const time = useTimeLabel(lang)
 
@@ -58,13 +71,18 @@ export function MacMenuBar({ status, onIconClick, theme, onToggleTheme, scrolled
         {theme === 'light' ? '☀' : '☾'}
       </button>
 
-      {/* 主角：Status Trio 就住在系统图标区，紧挨着控制中心 */}
+      {/* 主角：Status Trio 就住在系统图标区，紧挨着控制中心。
+          面板展开时按钮保持按下态，和真实的菜单栏高亮一致。 */}
       <button
         type="button"
         className="lp-menubar-app"
-        onClick={onIconClick}
+        ref={iconRef}
+        data-open={settingsOpen}
+        onClick={onToggleSettings}
         title={`${t.appLabel} — ${t.appHint}`}
-        aria-label={t.appLabel}
+        aria-label={`${t.appLabel} — ${t.appHint}`}
+        aria-expanded={settingsOpen}
+        aria-controls="settings-panel"
       >
         <StatusIcon state={status} size={APP.iconSize} />
       </button>

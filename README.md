@@ -2,7 +2,7 @@
 
 [Status Trio](https://github.com/lingyired/status-trio) 的产品落地页。
 
-形态是一张 macOS 桌面：顶部是真实的菜单栏，**Status Trio 的状态图标就长在右侧系统图标区里**，跟着桌面区「图标控制台」的状态实时变化；桌面区域可滚动，承载 Hero、可调图标 demo、特性、隐私、系统要求、排障与页脚。没有 Windows 任务栏。
+形态是一张 macOS 桌面：顶部是真实的菜单栏，**Status Trio 的状态图标就长在右侧系统图标区里**；菜单栏正下方浮着一块设置面板，**以那个图标的中心为锚点、贴边时用尖角指回去**（宽屏默认展开，点菜单栏图标开合），面板里改什么，菜单栏图标立刻跟着变。往下滚到「菜单栏实际尺寸」那张卡时，面板会跟着滚动滑到它右边落位、之后随卡片一起滚，回到顶部再反向滑回来 —— 也就是恢复卡片与设置并排的那版 layout（卡片高度取面板实测高度，两张卡上下沿齐平）。桌面区域可滚动，依次是 Hero、三个状态、菜单栏尺寸预览、隐私、系统要求、排障与页脚。没有 Windows 任务栏。
 
 图标本身来自 [`status-menubar-demo.html`](https://github.com/lingyired/status-trio)，按逐像素等价的几何移植为 React 组件（见下文「图标几何」）。
 
@@ -34,10 +34,12 @@ src/
   i18n.tsx                语言上下文：默认跟随浏览器语言，localStorage 持久化
   theme.ts                深浅主题：默认跟随系统，可手动切换
   status/StatusIcon.tsx   120×120 状态图标（电池弧 + Wi-Fi 三档 + 音量五档），纯数据驱动
-  status/controls.tsx     控制台控件（滑杆 / 开关 / 分段 / 下拉）
-  stage/MacMenuBar.tsx    macOS 菜单栏，含系统图标区里的 Status Trio 图标
+  status/controls.tsx     设置面板控件（滑杆 / 开关 / 分段 / 下拉）
+  stage/MacMenuBar.tsx    macOS 菜单栏，含系统图标区里的 Status Trio 图标（兼设置面板开关）
   stage/time.ts           菜单栏时钟
-  sections/               Hero / Playground / Features / Troubleshoot / Details
+  sections/               Hero / SettingsDock + SettingsPanel（浮动设置面板，
+                          滚动时落到 MenubarPreview 右侧的槽位）/ Features /
+                          MenubarPreview / Troubleshoot / Details
   styles/                 tokens.css（设计变量，含 dark / light 两套）+ landing.css
 ```
 

@@ -177,13 +177,16 @@
   background-clip: content-box;
 }
 
+/* 用 flex 而不是 grid：grid item 的包含块是它自己那一行，
+   sticky 会被限制在这一行里、等于失效；flex item 的包含块是整个列，
+   设置面板才能一路钉在菜单栏下方。 */
 .lp-column {
   width: 100%;
   max-width: 1024px;
   padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) 0;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: clamp(2.5rem, 5vw, 4rem);
-  align-content: start;
 }
 
 /* ══ 通用块 ══ */
@@ -393,19 +396,134 @@
   border-radius: 13px;
 }
 
-/* ══ 控制台 ══ */
-.pg-grid {
+/* ══ 菜单栏下方的浮动设置面板 ══ */
+/* 占位槽：sticky 钉在滚动区顶部，高度由 JS 按面板实测高度写入（见 SettingsDock），
+   所以面板浮在正文之上、但不会压住正文。 */
+.pg-dock {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  transition: height 260ms cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+
+/* 真正浮起来的那一层。绝对定位 → 不参与占位槽的高度计算，收起动画不会把面板压扁。
+   位置由 JS 写进 translate（见 SettingsDock）——停靠时以菜单栏图标为中心、夹在视口白边之内，
+   往下滚则一路滑到预览卡右侧的槽位。用独立的 translate 属性而不是 transform，
+   是为了跟下面收起动画的 transform 各管各的，互不覆盖。
+   宽度贴内容走（三列各自按最长的那件控件定宽），不为了填满而变宽。 */
+.pg-dock-body {
+  position: absolute;
+  top: 10px; /* 与 SettingsDock 里的 TOP_GAP 保持一致 */
+  left: 0;
+  width: max-content;
+  max-width: min(100%, 700px);
+  transition: opacity 180ms ease, transform 240ms cubic-bezier(0.22, 0.8, 0.3, 1),
+    visibility 0s linear 0s;
+}
+
+/* 指回菜单栏图标的小尖角。图标贴着屏幕右边时面板只能贴边，
+   靠它说明这块面板属于谁（真 macOS 弹层同款处理）。 */
+.pg-caret {
+  position: absolute;
+  top: -6px;
+  width: 14px;
+  height: 7px;
+  margin-left: -7px; /* left 落在尖角中心 */
+  background: var(--card-bg);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+
+.pg-dock-body[data-open='false'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-10px) scale(0.985);
+  /* visibility 延迟到动画结束再切，收起时还能看见它往菜单栏方向退 */
+  transition: opacity 160ms ease, transform 200ms ease, visibility 0s linear 200ms;
+}
+
+.pg-panel {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  gap: 1rem;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem 1rem;
+  border-radius: 16px;
+}
+
+/* 三列并排：电池 / Wi-Fi / 音量，正好是产品名里的「三态」。
+   列宽取内容（auto）——面板宽度随之贴着内容走，不会为了三等分而白白撑宽。 */
+.pg-cols {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 1.25rem;
+}
+
+.pg-panel-hint {
+  margin: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.76rem;
+  color: var(--ink-dim);
+}
+
+/* ══ 尺寸预览（排在功能列表下面） ══ */
+/* 这一行是「卡片 + 设置面板」的合体：左列是预览卡，右列空着等面板滚进来落位。
+   槽宽 = 面板实测宽度（--panel-w 由 JS 量、MenubarPreview 写入），
+   所以面板落定那一刻跟槽位严丝合缝，不用为它留一点余量。
+
+   默认只有一列 —— 面板不收窄、卡片也不想被挤扁，横向放不下就干脆别占位，
+   面板继续待在菜单栏下方（SettingsDock 发现槽宽不够会保持停靠）。 */
+.pv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
   align-items: start;
 }
 
+/* 落位槽：不画东西，只提供一个坐标（面板以它的左上角为自己的位置）。
+   高度为 0 是为了让 Rect.top 就是这一行的上沿；默认关掉，见下面那道宽度闸门。 */
+.pv-slot {
+  display: none;
+}
+
+/* 闸门：视口 ≥1024px 时才空出槽位。算下来正好够「面板全宽 + 卡片 ≥220px」，
+   英文面板（约 688px）在最窄处也不会把卡片压到看不见。 */
+@media (min-width: 1024px) {
+  .pv-row {
+    grid-template-columns: minmax(0, 1fr) var(--panel-w, 0px);
+  }
+
+  .pv-slot {
+    display: block;
+    height: 0;
+  }
+
+  /* 卡片与面板等高：直接取面板实测高度，落位后两张卡上下沿齐平。
+     面板比卡片内容矮时差出来的那点由大图那栏让（图居中，溢出的部分落在卡片内边距里，
+     不会切到图形）；面板更高时反过来，多出的高度整块给大图那栏。 */
+  .pg-preview {
+    height: var(--panel-h, auto);
+  }
+}
+
+/* 卡片：标签与说明同一行（说明靠右）→ 真实尺寸条带 → 放大图。
+   用 flex 而不是 grid：被拉高时多出来的空间要整块给大图那栏（flex-grow），
+   grid 的 auto 行会把空隙均摊，标签与条带之间会被白白撑开。
+   高度由面板实测高度写进 --panel-h（见 MenubarPreview），并排时两张卡上下沿齐平。 */
 .pg-preview {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.65rem;
-  justify-items: stretch;
   padding: 1.1rem 1.15rem 1.25rem;
+}
+
+/* 标签在左、说明靠右，同一行。卡片被挤到最窄时说明先折到第二行去（靠右对齐），
+   不会把标签压没。 */
+.pg-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.15rem 0.75rem;
 }
 
 .pg-bar-label {
@@ -449,23 +567,30 @@
 }
 
 .pg-caption {
-  margin: 0;
+  /* margin-left: auto → 贴着卡片右边（「float right」的效果）；
+     折到第二行时它同样靠右。 */
+  margin: 0 0 0 auto;
+  text-align: right;
   font-size: 0.78rem;
   color: var(--ink-dim);
 }
 
+/* 大图那栏吸收卡片的富余高度（卡片与面板等高时，多出/少掉的那点都落在这里），
+   图本身仍然居中被 place-items: center 摆正。 */
 .pg-hero {
   position: relative;
+  flex: 1 1 auto;
   display: grid;
   place-items: center;
-  padding: 1.6rem 0 1rem;
+  padding: 0.4rem 0;
 }
 
+/* 卡片被挤窄之后，光晕和大图都不能再按死尺寸画，否则会顶出卡片 */
 .pg-hero::before {
   content: '';
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: min(300px, 82%);
+  aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle, var(--glow), transparent 68%);
   pointer-events: none;
@@ -473,6 +598,8 @@
 
 .pg-hero-icon {
   position: relative;
+  width: min(216px, 100%);
+  aspect-ratio: 1;
   color: var(--ink);
   filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.28));
 }
@@ -481,22 +608,17 @@
   filter: drop-shadow(0 16px 30px rgba(22, 34, 56, 0.18));
 }
 
-/* ── 控制面板 ── */
-.pg-controls {
-  display: grid;
-  gap: 1.15rem;
-  padding: 1.15rem 1.2rem 1.3rem;
-  align-content: start;
-}
-
+/* ── 面板里的三组控件 ── */
 .pg-group {
   display: grid;
   gap: 0.6rem;
+  align-content: start;
 }
 
+/* 三列之间用竖线分隔（原来是上下分组，现在是左右并排） */
 .pg-group + .pg-group {
-  padding-top: 1.05rem;
-  border-top: 1px solid var(--card-border);
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--card-border);
 }
 
 .pg-group-title {
@@ -506,7 +628,10 @@
   letter-spacing: 0.01em;
 }
 
+/* 电池那组的脚注。限一下宽：它是三列里最长的一句，
+   不挡着的话会把这列撑到比控件还宽，整块面板跟着变胖（折两行无所谓）。 */
 .pg-hint {
+  max-width: 9.5rem;
   margin: 0.1rem 0 0;
   font-size: 0.74rem;
   color: var(--ink-dim);
@@ -661,10 +786,14 @@
   transform: translateX(14px);
 }
 
+/* 分段控件：格子按内容定宽（数字段给个下限，别窄到点不着），
+   而不是五等分——五等分时「静音」会把整条控件撑到 200px，
+   白白逼着面板变宽。多出来的宽度摊在格子之间。 */
 .ctl-segmented {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-columns: minmax(1.55rem, max-content);
+  justify-content: space-between;
   gap: 3px;
   padding: 3px;
   border: 1px solid var(--field-border);
@@ -729,23 +858,26 @@
 }
 
 /* ══ 功能列表 ══ */
+/* 三个状态并排；窄屏自动掉成一行一个 */
 .feat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 258px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 288px), 1fr));
   gap: 0.85rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* 一个图标配一句话，横着排 */
 .feat {
-  display: grid;
-  gap: 0.5rem;
-  align-content: start;
-  padding: 1.05rem 1.1rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.05rem;
 }
 
 .feat-icon {
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   width: 34px;
@@ -756,17 +888,11 @@
   color: var(--accent);
 }
 
-.feat-title {
-  margin: 0.15rem 0 0;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
-}
-
-.feat-desc {
+.feat-text {
   margin: 0;
   color: var(--ink-muted);
-  font-size: 0.85rem;
-  line-height: 1.58;
+  font-size: 0.88rem;
+  line-height: 1.55;
 }
 
 /* ══ 隐私 / 系统要求 ══ */
@@ -1067,13 +1193,32 @@
 
 /* ══ 自适应 ══ */
 @media (max-width: 860px) {
-  .pg-grid {
-    grid-template-columns: minmax(0, 1fr);
+  /* 钉在顶上的面板在窄屏会吃掉大半屏，退回普通文档流跟着内容滚。
+     仍然是定位元素 —— 否则绝对定位的面板会脱离这个槽位、跑去贴滚动区顶部。 */
+  .pg-dock {
+    position: relative;
   }
 
-  .pg-preview {
-    order: -1;
+  /* 一列排下来之后不再贴内容走，跟其它卡片一样占满内容列 */
+  .pg-dock-body {
+    width: 100%;
   }
+
+  .pg-cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.05rem;
+  }
+
+  /* 竖排之后分隔线也跟着转成横的 */
+  .pg-group + .pg-group {
+    padding-left: 0;
+    padding-top: 1.05rem;
+    border-left: 0;
+    border-top: 1px solid var(--card-border);
+  }
+
+  /* 窄屏没有横向空间让面板落到卡片右边：预览行本来就只有一列、槽位本来就关着，
+     面板老老实实待在菜单栏下面（SettingsDock 发现槽宽为 0 会保持停靠）。 */
 
   .hero-title {
     max-width: 26ch;

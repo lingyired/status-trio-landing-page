@@ -60,6 +60,10 @@
     已补，`twitter:card = summary_large_image`。**刻意不写 `og:url`**：双入口共用一份产物，
     写哪个都会让另一个指错。图是**英文版**（og 图全站只能一张）。换图流程见用户级 skill
     `screenshot-to-og-image`。
+    **2026-09-14 已部署上线**：`og.jpg` 82156 B / md5 `5cae8946…`，双入口均 200，
+    三种爬虫 UA 实测可抓（nginx 无需改动）。⚠️ 平台卡片有缓存，改完要让用户在
+    Facebook Sharing Debugger 手动"再次抓取"，微信/Telegram 需重发 ——
+    **线上图正确 ≠ 分享方立刻看到图**，别把它当部署失败去反复重推。
 
 ## 仅中文页的两块内容（闸门是 copy.ts 的字段，别再叠 `lang === 'zh'`）
 

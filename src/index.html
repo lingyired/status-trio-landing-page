@@ -38,18 +38,40 @@
     <link rel="preconnect" href="https://api.github.com" crossorigin />
     <meta
       name="description"
-      content="Status Trio 把 Wi-Fi、电池和音量合并成一个菜单栏图标。原生 Swift 写的 macOS 小工具，不联网、不含遥测。"
+      content="Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。"
     />
     <meta name="theme-color" content="#141b28" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#dfe7f2" media="(prefers-color-scheme: light)" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Status Trio · 三个系统状态，一个菜单栏图标" />
+    <meta property="og:title" content="Status Trio · iPhone duo 同款三合一图标" />
     <meta
       property="og:description"
-      content="Wi-Fi、电池、音量共用一个菜单栏图标。原生 macOS，左键弹层、右键菜单，不联网也无遥测。"
+      content="Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。"
     />
     <meta name="twitter:card" content="summary" />
-    <title>Status Trio · 三个系统状态，一个菜单栏图标</title>
+    <title>Status Trio · iPhone duo 同款三合一图标</title>
+    <!--
+      百度统计。站内 ID 与 lingai.net 主站同源（b00bcc1182fab106238c46cdebcc102d），
+      与主站那段用的是同一套 hostname 判定：只统计 lingai.net 及其子域，
+      本地 dev / preview / 其他域名一律不上报，避免开发期污染数据。
+
+      放在 head 末尾而非更靠前：它只是埋点，不该跟「主题 + 壁纸」那段首帧关键脚本
+      抢解析，更不能挡住壁纸预加载（fetchpriority=high）。insertBefore 插在文档第一个
+      script 之前 = 异步注入，不阻塞 HTML 解析。
+    -->
+    <script>
+      var _hmt = _hmt || []
+      ;(function () {
+        var host = location.hostname
+        if (host !== 'lingai.net' && !host.endsWith('.lingai.net')) {
+          return
+        }
+        var hm = document.createElement('script')
+        hm.src = 'https://hm.baidu.com/hm.js?b00bcc1182fab106238c46cdebcc102d'
+        var s = document.getElementsByTagName('script')[0]
+        s.parentNode.insertBefore(hm, s)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

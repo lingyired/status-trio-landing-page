@@ -28,7 +28,7 @@ const mirrorsZh: MirrorsCopy = {
 
 const zh = {
   html: {
-    title: 'Status Trio · 三个系统状态，一个菜单栏图标',
+    title: 'Status Trio · iPhone duo 同款三合一图标',
     description:
       'Status Trio 把 Wi-Fi、电池和音量合并成一个菜单栏图标。原生 Swift 写的 macOS 小工具，不联网、不含遥测。',
   },
@@ -41,14 +41,15 @@ const zh = {
 
   hero: {
     eyebrow: 'macOS 菜单栏小工具',
-    title: '三个系统状态，一个菜单栏图标。',
-    desc: 'Wi-Fi、电池、音量，原本散落在菜单栏上的三块地方，如今合成一个紧凑的图标。灵感来自 iPhone Duo 把状态栏合并显示的做法，在 Mac 上重新做了一遍。',
+    title: 'iPhone duo 同款三合一图标',
+    desc: 'Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。',
     ctaPrimary: '下载 macOS 版',
     ctaSecondary: '在 GitHub 上查看',
     ctaAll: '全部版本',
-    metaOs: 'macOS 15 或更高',
-    metaArch: 'Universal · Apple 芯片与 Intel',
-    metaNative: '原生 Swift · 不联网 · 无遥测',
+    metaOs: 'macOS 15+',
+    metaArch: '免费',
+    metaNative: '开源',
+    metaSafe: '安全无遥测',
     disclaimer: '独立项目，与 Apple 无隶属关系。',
   },
 
@@ -167,7 +168,7 @@ export type Copy = Omit<typeof zh, 'mirrors'> & { mirrors: MirrorsCopy | null }
 
 const en: Copy = {
   html: {
-    title: 'Status Trio · Three system signals, one menu bar icon',
+    title: 'Status Trio · The same 3-in-1 icon as iPhone Duo',
     description:
       'Status Trio combines Wi-Fi, battery, and volume into a single menu bar icon. A native Swift utility for macOS — no network access, no telemetry.',
   },
@@ -179,14 +180,15 @@ const en: Copy = {
 
   hero: {
     eyebrow: 'A macOS menu bar utility',
-    title: 'Three system signals. One menu bar icon.',
-    desc: 'Wi-Fi, battery, and volume used to live in three different corners of the menu bar. Now they share one compact icon — inspired by the iPhone Duo\u2019s combined status bar, rebuilt for the Mac.',
+    title: 'The same 3-in-1 icon as iPhone Duo',
+    desc: 'Status Trio is a native macOS menu bar app that folds Wi-Fi, battery, and volume into a single compact, configurable menu bar icon — with several appearance presets to choose from.',
     ctaPrimary: 'Download for macOS',
     ctaSecondary: 'View on GitHub',
     ctaAll: 'All releases',
-    metaOs: 'macOS 15 or later',
-    metaArch: 'Universal · Apple silicon and Intel',
-    metaNative: 'Native Swift · No network · No telemetry',
+    metaOs: 'macOS 15+',
+    metaArch: 'Free',
+    metaNative: 'Open Source',
+    metaSafe: 'Safe, no telemetry',
     disclaimer: 'Status Trio is an independent project and is not affiliated with Apple.',
   },
 

@@ -65,6 +65,7 @@ export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo
         <li>{h.metaOs}</li>
         <li>{h.metaArch}</li>
         <li>{h.metaNative}</li>
+        <li>{h.metaSafe}</li>
       </ul>
 
       <p className="hero-note">{h.disclaimer}</p>

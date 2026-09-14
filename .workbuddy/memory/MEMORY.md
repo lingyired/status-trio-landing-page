@@ -52,8 +52,11 @@
     此前只有 `og:title` / `description`、**没有 `og:image`** → 分享只有文字卡；
     `twitter:card` 还停在 `summary`（方形小图卡）。现在 `og:image` =
     `https://statustrio.lingai.net/og.jpg`（1200×630 / JPG q88 / 82 KB）——
-    **爬虫没有 base URL 概念，必须绝对 URL**，这也是整套 `assetPrefix: './'` 产物里
-    **唯一写死域名**的地方；`og:image:width/height`、`og:image:alt`、`twitter:image:alt`
+    **爬虫不做 base URL 解析、必须绝对 URL**（不是"解析后失败"，是压根不解析）。相对路径
+    没有绕法：`/statustrio` 不带尾斜杠时基准会掉到主域根；**更别用 `<base href>` 绕过**——
+    它会把 `./static/*.js|css` 一起重指到子域，主域入口直接跨域拉资源。这是整套
+    `assetPrefix: './'` 产物里 **唯一写死域名**的地方；
+    `og:image:width/height`、`og:image:alt`、`twitter:image:alt`
     已补，`twitter:card = summary_large_image`。**刻意不写 `og:url`**：双入口共用一份产物，
     写哪个都会让另一个指错。图是**英文版**（og 图全站只能一张）。换图流程见用户级 skill
     `screenshot-to-og-image`。

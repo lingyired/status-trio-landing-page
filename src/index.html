@@ -43,12 +43,39 @@
     <meta name="theme-color" content="#141b28" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#dfe7f2" media="(prefers-color-scheme: light)" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Status Trio" />
     <meta property="og:title" content="Status Trio · iPhone duo 同款三合一图标" />
     <meta
       property="og:description"
       content="Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。"
     />
-    <meta name="twitter:card" content="summary" />
+    <!--
+      分享图（1200×630，1.91:1）。几个刻意的选择：
+
+      · **必须写绝对 URL** —— 爬虫没有 base URL 概念，`./og.jpg` 一律抓不到。这是整套
+        相对路径产物（`assetPrefix: './'`）里唯一写死域名的地方。
+      · 图放 `public/og.jpg`（原样拷到 dist/ 根、不带哈希）。用 JPG quality 88（82 KB）
+        而非 PNG（310 KB）—— 爬虫抓取有超时、WhatsApp 有 ~300 KB 的软门槛。
+      · **故意不写 `og:url`**：站点有两个入口（子域根 + 主域子路径）共用这一份产物，
+        写哪个都会让另一个入口指向别处；留空则由平台按实际访问 URL 判定。
+      · 图是**英文版**，og 图全站只能有一张（爬虫拿到的永远是同一份 HTML），
+        没法按语言切换 —— 2026-09-14 与用户确认取英文。
+      图由用户提供的浏览器窗口截图裁出（去 chrome + 补边到 1.91:1），流程见
+      用户级 skill `screenshot-to-og-image`。
+    -->
+    <meta property="og:image" content="https://statustrio.lingai.net/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Status Trio landing page: the headline &quot;The same 3-in-1 icon as iPhone Duo&quot;, next to a settings panel for battery, Wi-Fi and volume."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://statustrio.lingai.net/og.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="Status Trio landing page: the headline &quot;The same 3-in-1 icon as iPhone Duo&quot;, next to a settings panel for battery, Wi-Fi and volume."
+    />
     <title>Status Trio · iPhone duo 同款三合一图标</title>
     <!--
       百度统计。站内 ID 与 lingai.net 主站同源（b00bcc1182fab106238c46cdebcc102d），

@@ -19,10 +19,21 @@ export const APP = {
 
 /** GitHub API 不可用时的兜底（当前最新发布）。 */
 export const RELEASE_FALLBACK = {
-  tag: 'v1.0.0',
+  tag: 'v1.0.2',
   /** DMG 体积，用于按钮上的副标题 */
-  size: '2.1 MB',
-  dmg: 'https://github.com/lingyired/status-trio/releases/download/v1.0.0/StatusTrio-1.0.0.dmg',
+  size: '2.2 MB',
+  dmg: 'https://github.com/lingyired/status-trio/releases/download/v1.0.2/StatusTrio-1.0.2.dmg',
+} as const
+
+/** 国内网盘镜像：与 GitHub 同一份 DMG，永久链接。仅中文页面展示（英文页不出现）。
+ *  ⚠️ 发新版要重新上传并换上新的分享链接 —— 和 RELEASE_FALLBACK 一起改。
+ *  百度的提取码直接拼进 URL（`?pwd=`），点开即自动填码、用户不用手输；
+ *  另存一份 `baiduCode` 只是为了页面上还能把码展示出来。 */
+export const MIRRORS = {
+  quark: 'https://pan.quark.cn/s/4618cc657752',
+  baidu: 'https://pan.baidu.com/s/1xVp9YV0t5eLnR1hKG9m1VA?pwd=dp90',
+  /** 百度网盘的提取码（已含在上面链接里，这里仅用于页面展示） */
+  baiduCode: 'dp90',
 } as const
 
 export interface ReleaseInfo {

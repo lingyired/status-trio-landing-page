@@ -1,5 +1,5 @@
 import React from 'react'
-import { APP, type ReleaseInfo } from '../app'
+import { APP, MIRRORS, type ReleaseInfo } from '../app'
 import { useI18n } from '../i18n'
 import { AlertMark, AppleMark, DownloadMark, GitHubMark } from './icons'
 import { Troubleshoot } from './Troubleshoot'
@@ -60,6 +60,24 @@ export const Details = React.memo(function Details({ release }: { release: Relea
             <AlertMark size={14} /> {t.troubleshoot.navHint}
           </a>
         </div>
+
+        {/* 国内网盘镜像：只有中文文案带这段（t.mirrors 为 null 时整块不渲染） */}
+        {t.mirrors && (
+          <div className="req-mirrors">
+            <span className="req-mirrors-label">{t.mirrors.label}</span>
+            <a className="req-mirror" href={MIRRORS.quark} target="_blank" rel="noreferrer">
+              <DownloadMark size={14} />
+              {t.mirrors.quark}
+            </a>
+            <a className="req-mirror" href={MIRRORS.baidu} target="_blank" rel="noreferrer">
+              <DownloadMark size={14} />
+              {t.mirrors.baidu}
+              <span className="req-mirror-code">
+                {t.mirrors.code} {MIRRORS.baiduCode}
+              </span>
+            </a>
+          </div>
+        )}
       </section>
 
       <Troubleshoot />

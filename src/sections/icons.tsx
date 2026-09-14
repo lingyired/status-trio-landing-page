@@ -70,6 +70,31 @@ export function MenuBarMark({ size = 15 }: { size?: number }) {
   )
 }
 
+/** 夸克网盘：云朵 + 下落箭头 */
+export function QuarkMark({ size = 16 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} {...stroke} aria-hidden>
+      <path d="M19 18a3.5 3.5 0 0 0 0-7h-1.3a5.4 5.4 0 0 0-9.4-2.7 4.6 4.6 0 0 0-1.3 8.4" />
+      <path d="M12 13v9" />
+      <path d="m9 19 3 3 3-3" />
+    </svg>
+  )
+}
+
+/** 百度网盘：熊猫脸线稿。双耳圆环 + 圆脸 + 实心眼点 + 微笑，单一 currentColor。 */
+export function BaiduMark({ size = 16 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} {...stroke} aria-hidden>
+      <circle cx="6.4" cy="8" r="2.1" />
+      <circle cx="17.6" cy="8" r="2.1" />
+      <ellipse cx="12" cy="14" rx="7.2" ry="6.4" />
+      <circle cx="9.4" cy="14" r="0.85" fill="currentColor" stroke="none" />
+      <circle cx="14.6" cy="14" r="0.85" fill="currentColor" stroke="none" />
+      <path d="M10.7 17.1c.85.8 1.75.8 2.6 0" />
+    </svg>
+  )
+}
+
 /** 复制按钮：点击写入剪贴板，短暂切换成「已复制」。 */
 export function CopyButton({ text, labels }: { text: string; labels: { copy: string; copied: string } }) {
   const [copied, setCopied] = React.useState(false)

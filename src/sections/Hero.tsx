@@ -1,8 +1,8 @@
 import React from 'react'
 import appIcon from '../assets/app-icon.svg'
-import { APP, type ReleaseInfo } from '../app'
+import { APP, MIRRORS, type ReleaseInfo } from '../app'
 import { useI18n } from '../i18n'
-import { AppleMark, GitHubMark } from './icons'
+import { AppleMark, BaiduMark, GitHubMark, QuarkMark } from './icons'
 
 /** 首屏：品牌 + 一句话定位 + 下载入口。
  *  用 memo 包住：status（图标状态）由页面根持有，控制台滑杆每动一格都会让根重渲染，
@@ -38,6 +38,23 @@ export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo
             <span className="btn-main">{h.ctaSecondary}</span>
           </span>
         </a>
+        {/* 国内网盘镜像：与下方「系统要求」段同一份链接，只有中文文案带这段 */}
+        {t.mirrors && (
+          <>
+            <a className="btn btn--ghost" href={MIRRORS.quark} target="_blank" rel="noreferrer">
+              <QuarkMark size={16} />
+              <span className="btn-body">
+                <span className="btn-main">{t.mirrors.quark}</span>
+              </span>
+            </a>
+            <a className="btn btn--ghost" href={MIRRORS.baidu} target="_blank" rel="noreferrer">
+              <BaiduMark size={16} />
+              <span className="btn-body">
+                <span className="btn-main">{t.mirrors.baidu}</span>
+              </span>
+            </a>
+          </>
+        )}
       </div>
 
       <a className="hero-all" href={APP.releases} target="_blank" rel="noreferrer">

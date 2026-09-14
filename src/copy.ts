@@ -11,6 +11,21 @@ export type WifiStateKey =
   | 'temporary'
   | 'shared'
 
+/** 国内网盘镜像区块的文案。只有中文页面展示，英文页不出现（见 `en.mirrors = null`）。 */
+export interface MirrorsCopy {
+  label: string
+  quark: string
+  baidu: string
+  code: string
+}
+
+const mirrorsZh: MirrorsCopy = {
+  label: '下载慢？国内网盘也放了一份：',
+  quark: '夸克网盘',
+  baidu: '百度网盘',
+  code: '提取码',
+}
+
 const zh = {
   html: {
     title: 'Status Trio · 三个系统状态，一个菜单栏图标',
@@ -100,6 +115,8 @@ const zh = {
     ctaSub: 'DMG 安装包',
   },
 
+  mirrors: mirrorsZh,
+
   /** 排障：安装后打不开。`**粗体**` 与 `` `行内代码` `` 会在渲染时解析。 */
   troubleshoot: {
     eyebrow: '安装后打不开？',
@@ -144,7 +161,9 @@ const zh = {
   },
 }
 
-export type Copy = typeof zh
+/** zh 是基准；除 `mirrors` 外每个键都必须有英文版本。
+ *  `mirrors` 只有中文页用得上，所以单独放宽成可空 —— 英文侧显式写 null。 */
+export type Copy = Omit<typeof zh, 'mirrors'> & { mirrors: MirrorsCopy | null }
 
 const en: Copy = {
   html: {
@@ -230,6 +249,9 @@ const en: Copy = {
     cta: 'Download Status Trio',
     ctaSub: 'DMG installer',
   },
+
+  /** 国内网盘镜像只在中文页出现，英文页不展示 */
+  mirrors: null,
 
   troubleshoot: {
     eyebrow: 'Troubleshooting',

@@ -973,6 +973,45 @@
   color: var(--warn);
 }
 
+/* 国内网盘镜像（仅中文页出现）：一行轻量链接 + 提取码 */
+.req-mirrors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 1.1rem;
+  margin-top: 0.1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--card-border);
+  font-size: 0.85rem;
+}
+
+.req-mirrors-label {
+  color: var(--ink-dim);
+}
+
+.req-mirror {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+
+.req-mirror:hover {
+  color: var(--accent);
+}
+
+.req-mirror-code {
+  padding: 0.06rem 0.4rem;
+  border: 1px solid var(--field-border);
+  border-radius: 5px;
+  background: var(--field-bg);
+  color: var(--ink-muted);
+  font-family: ui-monospace, 'SFMono-Regular', SFMono, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+}
+
 /* ══ 排障：安装后打不开 ══ */
 .fix-list {
   display: grid;

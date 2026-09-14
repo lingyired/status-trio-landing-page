@@ -11,10 +11,13 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-echo "==> [1/2] 本地构建 dist/ ..."
+echo "==> [1/3] 类型检查 ..."
+corepack pnpm run typecheck
+
+echo "==> [2/3] 本地构建 dist/ ..."
 corepack pnpm run build
 
-echo "==> [2/2] 同步 dist/ 到服务器 (lingai-vps:/www/wwwroot/statustrio-landing/dist/) ..."
+echo "==> [3/3] 同步 dist/ 到服务器 (lingai-vps:/www/wwwroot/statustrio-landing/dist/) ..."
 rsync -avz --delete -e ssh dist/ lingai-vps:/www/wwwroot/statustrio-landing/dist/
 
 echo "==> 部署完成："

@@ -26,6 +26,27 @@ const mirrorsZh: MirrorsCopy = {
   code: '提取码',
 }
 
+/** 菜单栏里那两个 Fund01 联动分组的文案。同样只有中文页展示（见 `en.fund01 = null`）。
+ *  ⚠️ `pct` 是当日涨跌幅的**静态快照**（照 Fund01 App 抄的），会随行情过期；
+ *  想换分组、改数字就改这里，别在别处再写一份。 */
+export interface Fund01Copy {
+  /** 分组名 + 当日涨跌幅（%）。`pct > 0` 走上行（红）、`< 0` 走下行（绿） */
+  groups: { name: string; pct: number }[]
+  /** 无障碍标签前缀，读成「<groupAria> 总览」 */
+  groupAria: string
+  /** 悬停提示 */
+  hint: string
+}
+
+const fund01Zh: Fund01Copy = {
+  groups: [
+    { name: '总览', pct: 2.71 },
+    { name: '海外投资', pct: 2.25 },
+  ],
+  groupAria: '来自 Fund01 的菜单栏分组',
+  hint: 'Fund01 · 点开看详情',
+}
+
 const zh = {
   html: {
     title: 'Status Trio · iPhone duo 同款三合一图标',
@@ -118,6 +139,10 @@ const zh = {
 
   mirrors: mirrorsZh,
 
+  /** 顶部菜单栏里那两个 Fund01 联动分组，排在 Status Trio 图标左边
+   *  （只有中文页有，点开跳 lingai.net/fund01） */
+  fund01: fund01Zh,
+
   /** 排障：安装后打不开。`**粗体**` 与 `` `行内代码` `` 会在渲染时解析。 */
   troubleshoot: {
     eyebrow: '安装后打不开？',
@@ -162,9 +187,12 @@ const zh = {
   },
 }
 
-/** zh 是基准；除 `mirrors` 外每个键都必须有英文版本。
- *  `mirrors` 只有中文页用得上，所以单独放宽成可空 —— 英文侧显式写 null。 */
-export type Copy = Omit<typeof zh, 'mirrors'> & { mirrors: MirrorsCopy | null }
+/** zh 是基准；除 `mirrors` / `fund01` 外每个键都必须有英文版本。
+ *  这两块只有中文页用得上，所以单独放宽成可空 —— 英文侧显式写 null。 */
+export type Copy = Omit<typeof zh, 'mirrors' | 'fund01'> & {
+  mirrors: MirrorsCopy | null
+  fund01: Fund01Copy | null
+}
 
 const en: Copy = {
   html: {
@@ -254,6 +282,9 @@ const en: Copy = {
 
   /** 国内网盘镜像只在中文页出现，英文页不展示 */
   mirrors: null,
+
+  /** Fund01 菜单栏联动分组同理：英文页不展示 */
+  fund01: null,
 
   troubleshoot: {
     eyebrow: 'Troubleshooting',

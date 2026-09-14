@@ -109,6 +109,57 @@
   letter-spacing: 0.02em;
 }
 
+/* Fund01 联动分组：两行小签（上行分组名、下行当日涨跌幅），排成一个整体。
+   几何照抄 fund01 landing 的 .lp-menubar-group（10px 名 / 12.5px 数字、上下 1px 缝），
+   配色换成本仓语义变量（--rise / --fall，见 tokens.css）。 */
+.lp-menubar-groups {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lp-menubar-group {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.1;
+  white-space: nowrap;
+  transition: background 140ms ease;
+}
+
+.lp-menubar-group:hover {
+  background: var(--menubar-hover);
+}
+
+.lp-g-name {
+  font-size: 10px;
+  color: var(--menubar-fg-dim);
+}
+
+.lp-g-pct {
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 涨红跌绿：国内口径，与 Fund01 菜单栏一致 */
+.lp-g-rise {
+  color: var(--rise);
+}
+
+.lp-g-fall {
+  color: var(--fall);
+}
+
+.lp-g-flat {
+  color: var(--menubar-fg-dim);
+}
+
 /* 主角：Status Trio 图标所在的菜单栏位置 */
 .lp-menubar-app {
   appearance: none;
@@ -1239,6 +1290,12 @@
 
   /* 窄屏没有横向空间让面板落到卡片右边：预览行本来就只有一列、槽位本来就关着，
      面板老老实实待在菜单栏下面（SettingsDock 发现槽宽为 0 会保持停靠）。 */
+
+  /* Fund01 那两签也一起退场：菜单栏一行放不下它们（宽屏约 780px 才够），
+     硬留着会把系统图标区挤出屏幕。 */
+  .lp-menubar-groups {
+    display: none;
+  }
 
   .hero-title {
     max-width: 26ch;

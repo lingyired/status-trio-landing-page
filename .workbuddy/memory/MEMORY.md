@@ -67,7 +67,8 @@
   —— 这是百度官方支持的写法（fund01 landing 也是这么干的）。`baiduCode` 另存一份只为页面上展示。
 - 文案在 `src/copy.ts`：`MirrorsCopy` 接口 + `mirrorsZh`；**`Copy` 类型是
   `Omit<typeof zh, 'mirrors'> & { mirrors: MirrorsCopy | null }`**，en 侧显式写 `mirrors: null`。
-  这是「zh 为基准、en 受 Copy 约束」的唯一例外（可空的理由：只有中文页用得到）。
+  这是「zh 为基准、en 受 Copy 约束」的两个例外之一（另一个是下节的 `fund01`；
+  **可空的理由都是「只有中文页用得到」**）。
 - **两处渲染，都拿 `t.mirrors` 当闸门（不要再叠 `lang === 'zh'`）**：
   - 首屏 `.hero-cta`（`src/sections/Hero.tsx`）：主下载按钮 + GitHub 之后追加两个 `.btn--ghost`
     按钮，图标 `QuarkMark` / `BaiduMark`，标签复用 `t.mirrors.quark` / `.baidu`（**不新增 hero 键**，
@@ -78,6 +79,33 @@
   常量（1.7，fund01 原版是 2 / 1.8）。
 - 样式：`.req-mirrors` / `.req-mirror` / `.req-mirror-code`（`landing.css`，`.req-trouble:hover` 之后）。
   **首屏那两个按钮复用现成的 `.btn--ghost`，没有新样式**。
+
+## Fund01 菜单栏联动（2026-09-14 加，**仅中文页**）
+
+- 目的：顶部菜单栏里多出**姊妹项目 Fund01 的两个分组**（`总览 +2.71%` / `海外投资 +2.25%`），
+  **点开新标签去 `https://lingai.net/fund01/`**；英文页刻意不展示。
+- **位置：语言 / 主题按钮的左边**（`.lp-menubar-spacer` 之后、`.lp-menubar-lang` 之前）——
+  用户 2026-09-14 第二轮明确说「显示在切换中英文的左边」。⚠️ 第一版放在 Status Trio 图标左边
+  （照 fund01 landing 的排法）**被否掉了**；他原话的「顶部 menubar 的左侧」指的就是「中/EN 前面」。
+  再要挪就是 `MacMenuBar.tsx` 里摆一个节点的事。
+- **组件 `src/stage/Fund01Groups.tsx`**：`<a target="_blank" rel="noreferrer">` 两行小签
+  （上行分组名 10px 灰、下行涨跌幅 12.5px 600 重），**类名沿用 fund01 landing**
+  （`.lp-menubar-groups` / `.lp-menubar-group` / `.lp-g-name` / `.lp-g-pct` /
+  `.lp-g-rise|fall|flat`），样式在 `landing.css` 的 `.lp-menubar-lang` 之后。
+  `pct > 0` 走上行、`< 0` 走下行、`= 0` 走 flat（不染色、不带符号）。
+- **涨红跌绿**（国内口径，对齐 Fund01）：`tokens.css` 新增 `--rise` / `--fall`。
+  深色用 fund01 原值（`#ff4f44` / `#34c759`）；**浅色压深到 `#d70015` / `#178236`**
+  （原色在浅色菜单栏上只有 3.2:1 / 2.1:1，读不清）—— 与 `--warn` 同样的处理思路。
+- **文案 + 数值都在 `src/copy.ts` 的 `fund01`**（`Fund01Copy`：`groups[{name,pct}]` /
+  `groupAria` / `hint`），`en.fund01 = null`；**闸门就是 `t.fund01`**（组件内 `if (!f) return null`，
+  别再叠 `lang === 'zh'`）。`Copy` 类型 = `Omit<typeof zh, 'mirrors' | 'fund01'> & {…}`。
+  链接常量 `FUND01_SITE` 在 `src/app.ts`（照 MIRRORS 的做法：**URL 在 app.ts、文案在 copy.ts**）。
+- ⚠️ `pct` 是**静态快照**（照 Fund01 App 抄的当日涨跌幅），行情一变就过期；没有接数据接口。
+  要联动真实行情得先解决数据源（Fund01 的 landing 没有公开行情 API）。
+- 窄屏 **≤860px 整块 `display: none`**（写进现有那个 860 媒体查询块里 → **不新增断点**）：
+  菜单栏要 ~780px 才放得下这两签，留着会把系统图标区挤出屏幕。
+- 「菜单栏实际尺寸」预览条（`MenubarPreview` 的 `.pg-bar`）**没有**加这两签 —— 那条带子演示的是
+  Status Trio 自己的占地，要加得先问用户。
 
 ## 布局与浮动面板
 

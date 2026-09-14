@@ -36,6 +36,10 @@ export const MIRRORS = {
   baiduCode: 'dp90',
 } as const
 
+/** 姊妹项目 Fund01 的落地页：菜单栏那两个联动分组点开就是它。
+ *  分组名与涨跌幅在 `src/copy.ts` 的 `fund01`（只有中文页展示）。 */
+export const FUND01_SITE = 'https://lingai.net/fund01/'
+
 export interface ReleaseInfo {
   tag: string
   dmg: string

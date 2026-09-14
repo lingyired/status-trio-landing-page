@@ -3,6 +3,7 @@ import { APP } from '../app'
 import { StatusIcon, type StatusIconState } from '../status/StatusIcon'
 import { useI18n } from '../i18n'
 import type { ThemePref } from '../theme'
+import { Fund01Groups } from './Fund01Groups'
 import { useTimeLabel } from './time'
 
 interface Props {
@@ -51,6 +52,10 @@ export function MacMenuBar({
       ))}
 
       <span className="lp-menubar-spacer" />
+
+      {/* 姊妹项目 Fund01 的两个分组（总览 / 海外投资），排在语言 / 主题按钮的**左边** ——
+          同一台 Mac 上并排的菜单栏小工具，点开去它的落地页。中文页才有。 */}
+      <Fund01Groups />
 
       <button
         type="button"

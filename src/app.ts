@@ -35,10 +35,10 @@ export const RELEASE = {
  *  百度的提取码直接拼进 URL（`?pwd=`），点开即自动填码、用户不用手输；
  *  另存一份 `baiduCode` 只是为了页面上还能把码展示出来。 */
 export const MIRRORS = {
-  quark: 'https://pan.quark.cn/s/4618cc657752',
-  baidu: 'https://pan.baidu.com/s/1xVp9YV0t5eLnR1hKG9m1VA?pwd=dp90',
+  quark: 'https://pan.quark.cn/s/e28ddb4cf8da',
+  baidu: 'https://pan.baidu.com/s/1HU-0RoFm2rMrlQ4TuPmjPw?pwd=18kk',
   /** 百度网盘的提取码（已含在上面链接里，这里仅用于页面展示） */
-  baiduCode: 'dp90',
+  baiduCode: '18kk',
 } as const
 
 /** 姊妹项目 Fund01 的落地页：菜单栏那两个联动分组点开就是它。

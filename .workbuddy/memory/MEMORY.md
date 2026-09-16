@@ -17,8 +17,10 @@
 7. SVG 上做 `transition: stroke-dasharray` 前先确认各状态 dash 段数一致，否则虚线段沿路径滑动
    → 挖洞交给 `<mask>`，dash 列表保持恒定段数（`StatusIcon.tsx`）。
 8. **产品事实回源核对**：DMG 内是 `Status Trio.app`（带空格，命令行要引号）；**ad-hoc 签名未公证**
-   → Gatekeeper 会拦；`LSUIElement = true` → 无窗口无 Dock 图标，「打开没反应」属正常；排障章节
-   （`#troubleshoot`）只写 macOS，**不写 Windows SmartScreen**。
+   → Gatekeeper 会拦；无主窗口，「打开没反应」属正常（1.1 起图标可放菜单栏 / 程序坞 / 两处，
+   默认菜单栏）—— 排障章节只写 macOS，**不写 Windows SmartScreen**。
+   ⚠️ 2026-09-16：v1.1.0 加了程序坞模式，「纯菜单栏应用 / 没有 Dock 图标」那套说法**已全部改掉**
+   （`hero` 段 + `troubleshoot.menubar` + `html.description`），别再写回去。
 9. **页面不连任何第三方接口**（2026-09-16 起；之前那套运行时拉 `api.github.com` 已整个拿掉）。
    发布信息全是仓库里的手动快照，**发新版要动三处**：`src/app.ts` 的 `RELEASE`（tag / 体积 /
    DMG 链接）+ 同文件的 `MIRRORS`（重传网盘、换链接）+ `./scripts/snapshot-releases.sh` 刷新
@@ -30,7 +32,7 @@
     ⚠️ 与 `src/theme.ts` 是**两套必须同口径的实现**（localStorage 键 `status-trio.landing.theme`
     两边硬编码）→ 改一边必须同步另一边。
 12. `LandingPage` 的 state 重渲染整棵子树；不依赖 state 的 section 用 `React.memo`
-    （Hero / Features / Details 已 memo）。
+    （Hero / Features / Details / Screenshots 已 memo；Screenshots 只吃 `theme` 一个 prop）。
 13. **毛玻璃是刻意保留的成本**，别以性能为名去掉：`.card` `blur(26px) saturate(1.5)`、
     `.lp-menubar` `blur(22px) saturate(1.7)`；`--card-bg` = 深 `rgba(30,34,44,0.9)` /
     浅 `rgba(255,255,255,0.9)`（实测值，**别退回 0.6 / 0.72**），边框不动、菜单栏保持半透明。
@@ -80,6 +82,25 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
 - `rich()`（`**粗体**` + `` `行内代码` ``）已提到 `src/rich.tsx` 共用。
 - `z-index: 80` 够用；Hero 祖先链上**没有 transform / filter / backdrop-filter**，`.cl-overlay`
   的 `fixed` 相对视口 —— **以后再往 Hero 外层加 transform 要回来复核**。
+
+## 截图区（2026-09-16 加）
+
+排在 `MenubarPreview` 之后、`Details` 之前。`src/sections/Screenshots.tsx`，
+**唯一需要知道主题的 section**（图标状态那张有浅 / 深两版）→ `LandingPage` 传 `theme`。
+
+- **图在 `public/screenshots/*.webp`**（固定路径、不参与哈希 → 组件里写死 `./screenshots/x.webp`）。
+  素材源在 App 仓库 `~/Documents/aiwork/status-trio/screenshots/`，**不在本仓**。
+  转 webp 用托管 venv 的 Pillow（LANCZOS、quality 80–84、method 6）：全屏截图保持 1440 宽，
+  文档式长图 1400（图标背景）/ 1788（图标状态，要留住小字）。六张 413 KB，源图 1.32 MB（**-69%**）。
+- **lazyload**：`<img>` 带 `loading="lazy" decoding="async"` **加原始宽高**
+  （`SHOTS` 表里的 `w`/`h` 必须与文件一致，否则加载前占位比例不对、滚动会抖）。
+- **主题切图只挂一张**：`icon-states.webp`（白底）/ `icon-states-dark.webp`（#252529 底）按 `theme`
+  条件渲染 —— **不是**两张都进 DOM 再用 CSS 藏一张（藏的那张照样会被拉下来，白花 120 KB）。
+  `dock-icons.webp` 只有浅底一版，深色主题下就是一块白，可接受。
+- 点图 → `.shot-overlay`（`z-index: 90`，压过更新日志的 80）：Esc / 点遮罩 / 右上角关闭，
+  锁 `body.overflow`；图按容器宽等比缩放，比视口高的内部滚动。
+- **没纳入**：`normal.png` / `popup.png` / `status-style.png` 是旧版视觉（菜单栏模式、英文界面、
+  旧弹窗布局）且分辨率低（494 / 646 / 288 宽），与 1.1 的 UI 对不上。
 
 ## 仓库 / 部署 / 命令
 

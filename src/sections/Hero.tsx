@@ -1,15 +1,19 @@
 import React from 'react'
 import appIcon from '../assets/app-icon.svg'
-import { APP, MIRRORS, type ReleaseInfo } from '../app'
+import { APP, MIRRORS, RELEASE } from '../app'
 import { useI18n } from '../i18n'
-import { AppleMark, BaiduMark, GitHubMark, QuarkMark } from './icons'
+import { ChangelogDialog } from './ChangelogDialog'
+import { AppleMark, BaiduMark, ClockMark, GitHubMark, QuarkMark } from './icons'
 
 /** 首屏：品牌 + 一句话定位 + 下载入口。
  *  用 memo 包住：status（图标状态）由页面根持有，控制台滑杆每动一格都会让根重渲染，
- *  而 Hero 只依赖 release —— memo 把这些与它无关的更新挡在外面。 */
-export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo }) {
+ *  而这里读的全是常量 —— memo 把这些与它无关的更新挡在外面。 */
+export const Hero = React.memo(function Hero() {
   const { t } = useI18n()
   const h = t.hero
+  /** 更新日志弹层：版本号徽标点开 */
+  const [changelogOpen, setChangelogOpen] = React.useState(false)
+  const closeChangelog = React.useCallback(() => setChangelogOpen(false), [])
 
   return (
     <section className="sec hero">
@@ -23,12 +27,12 @@ export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo
       <p className="hero-desc">{h.desc}</p>
 
       <div className="hero-cta">
-        <a className="btn btn--primary" href={release.dmg} target="_blank" rel="noreferrer">
+        <a className="btn btn--primary" href={RELEASE.dmg} target="_blank" rel="noreferrer">
           <AppleMark size={15} />
           <span className="btn-body">
             <span className="btn-main">{h.ctaPrimary}</span>
             <span className="btn-sub">
-              {release.tag} · {release.size}
+              {RELEASE.tag} · {RELEASE.size}
             </span>
           </span>
         </a>
@@ -57,9 +61,22 @@ export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo
         )}
       </div>
 
-      <a className="hero-all" href={APP.releases} target="_blank" rel="noreferrer">
-        {h.ctaAll}
-      </a>
+      <div className="hero-verline">
+        <a className="hero-all" href={APP.releases} target="_blank" rel="noreferrer">
+          {h.ctaAll}
+        </a>
+        {/* 版本号：点开是全部版本的更新日志（数据在 src/release-notes.json，不联网） */}
+        <button
+          type="button"
+          className="hero-ver"
+          onClick={() => setChangelogOpen(true)}
+          title={t.changelog.hint}
+          aria-haspopup="dialog"
+        >
+          <ClockMark size={12} />
+          {RELEASE.tag} · {t.changelog.cta}
+        </button>
+      </div>
 
       <ul className="hero-meta">
         <li>{h.metaOs}</li>
@@ -69,6 +86,8 @@ export const Hero = React.memo(function Hero({ release }: { release: ReleaseInfo
       </ul>
 
       <p className="hero-note">{h.disclaimer}</p>
+
+      <ChangelogDialog open={changelogOpen} onClose={closeChangelog} />
     </section>
   )
 })

@@ -369,6 +369,36 @@
   text-decoration: underline;
 }
 
+/* 「全部版本」与版本号徽标同一行 —— 两者都是版本信息，凑一块更好找 */
+.hero-verline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+
+/* 版本号徽标：点开全部版本的更新日志。形态与 .hero-brand-tag 一致 */
+.hero-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.34rem;
+  padding: 3px 10px;
+  border: 1px solid var(--field-border);
+  border-radius: 999px;
+  background: var(--field-bg);
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.hero-ver:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
 .hero-meta {
   display: flex;
   flex-wrap: wrap;
@@ -390,6 +420,227 @@
   margin: 0.3rem 0 0;
   color: var(--ink-dim);
   font-size: 0.78rem;
+}
+
+/* ══ 更新日志弹层（首屏版本号点开）══ */
+.cl-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  background: var(--scrim-strong);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: cl-fade 160ms ease;
+}
+
+/* 面板沿用卡片的毛玻璃材质（与 .card 同源），盖在遮罩上仍旧透出底色 */
+.cl {
+  display: flex;
+  flex-direction: column;
+  width: min(660px, 100%);
+  max-height: min(80vh, 760px);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  background: var(--card-bg);
+  backdrop-filter: blur(26px) saturate(1.5);
+  -webkit-backdrop-filter: blur(26px) saturate(1.5);
+  box-shadow: var(--card-shadow);
+  animation: cl-rise 200ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes cl-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cl-rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+.cl-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.1rem 0.85rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.cl-icoframe {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+
+.cl-headtext {
+  flex: 1;
+  min-width: 0;
+}
+
+.cl-title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cl-sub {
+  margin: 0.15rem 0 0;
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+}
+
+.cl-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--field-border);
+  border-radius: 9px;
+  background: var(--field-bg);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.cl-close:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+/* 列表区自己滚，头部固定 */
+.cl-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.2rem 1.1rem 1.1rem;
+}
+
+.cl-entry {
+  padding: 0.95rem 0 1rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.cl-entry:last-child {
+  padding-bottom: 0.3rem;
+  border-bottom: 0;
+}
+
+.cl-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+}
+
+.cl-ver {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-latest {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.cl-date {
+  margin-left: auto;
+  color: var(--ink-dim);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-h {
+  margin: 0.75rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.cl-entry-head + .cl-h {
+  margin-top: 0.5rem;
+}
+
+.cl-p {
+  margin: 0.45rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.84rem;
+  line-height: 1.62;
+}
+
+.cl-notes {
+  display: grid;
+  gap: 0.32rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cl-notes li {
+  position: relative;
+  padding-left: 0.95rem;
+  color: var(--ink-muted);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.cl-notes li::before {
+  content: '';
+  position: absolute;
+  top: 0.62em;
+  left: 0.1rem;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.cl code {
+  padding: 0.05em 0.34em;
+  border: 1px solid var(--field-border);
+  border-radius: 5px;
+  background: var(--field-bg);
+  font-family: ui-monospace, 'SFMono-Regular', SFMono, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+.cl-empty {
+  margin: 1.4rem 0;
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+  text-align: center;
+}
+
+.cl-empty a {
+  color: var(--accent);
+}
+
+.cl-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cl-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cl-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: var(--field-border);
 }
 
 /* ── 按钮 ── */

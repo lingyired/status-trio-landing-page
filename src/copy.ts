@@ -74,6 +74,19 @@ const zh = {
     disclaimer: '独立项目，与 Apple 无隶属关系。',
   },
 
+  /** 更新日志弹层：首屏那个版本号徽标点开就是它。正文来自 GitHub release note，不在这里。 */
+  changelog: {
+    cta: '更新日志',
+    hint: '点开看每个版本改了什么',
+    title: '更新日志',
+    sub: '各版本的更新说明，最新的在最上面',
+    latest: '最新',
+    published: '发布于',
+    close: '关闭更新日志',
+    empty: '暂时取不到更新说明。',
+    emptyLink: '去 GitHub 看全部版本',
+  },
+
   /** 浮动设置面板（挂在菜单栏正下方）里的三组选项 */
   settings: {
     hint: '和 App 里的设置一模一样。菜单栏上的图标会立刻跟着变；点一下菜单栏图标就能收起来。',
@@ -218,6 +231,18 @@ const en: Copy = {
     metaNative: 'Open Source',
     metaSafe: 'Safe, no telemetry',
     disclaimer: 'Status Trio is an independent project and is not affiliated with Apple.',
+  },
+
+  changelog: {
+    cta: 'Changelog',
+    hint: 'See what changed in every version',
+    title: 'Changelog',
+    sub: 'Release notes for every version, newest first',
+    latest: 'Latest',
+    published: 'Released',
+    close: 'Close changelog',
+    empty: 'Release notes are unavailable right now.',
+    emptyLink: 'All releases on GitHub',
   },
 
   settings: {

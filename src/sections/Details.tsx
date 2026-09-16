@@ -1,13 +1,13 @@
 import React from 'react'
-import { APP, MIRRORS, type ReleaseInfo } from '../app'
+import { APP, MIRRORS, RELEASE } from '../app'
 import { useI18n } from '../i18n'
 import { AlertMark, AppleMark, DownloadMark, GitHubMark } from './icons'
 import { Troubleshoot } from './Troubleshoot'
 
 /** 隐私说明 + 系统要求（含下载收尾）+ 页脚。
- *  用 memo 包住：子树最重（内含 Troubleshoot 的两张排障卡片），而它只依赖 release，
+ *  用 memo 包住：子树最重（内含 Troubleshoot 的两张排障卡片），读的又全是常量，
  *  不该跟着控制台滑杆的高频更新一起 reconcile。 */
-export const Details = React.memo(function Details({ release }: { release: ReleaseInfo }) {
+export const Details = React.memo(function Details() {
   const { t } = useI18n()
 
   return (
@@ -44,12 +44,12 @@ export const Details = React.memo(function Details({ release }: { release: Relea
         </div>
 
         <div className="req-cta">
-          <a className="btn btn--primary btn--lg" href={release.dmg} target="_blank" rel="noreferrer">
+          <a className="btn btn--primary btn--lg" href={RELEASE.dmg} target="_blank" rel="noreferrer">
             <AppleMark size={16} />
             <span className="btn-body">
               <span className="btn-main">{t.requirements.cta}</span>
               <span className="btn-sub">
-                {release.tag} · {t.requirements.ctaSub} · {release.size}
+                {RELEASE.tag} · {t.requirements.ctaSub} · {RELEASE.size}
               </span>
             </span>
           </a>

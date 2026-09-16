@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { RELEASE_FALLBACK, fetchLatestRelease, type ReleaseInfo } from '../app'
+import React, { useCallback, useRef, useState } from 'react'
 import { DEFAULT_STATUS, type StatusIconState } from '../status/StatusIcon'
 import { MacMenuBar } from '../stage/MacMenuBar'
 import { Hero } from '../sections/Hero'
@@ -14,13 +13,6 @@ import '../styles/landing.css'
 /** 窄屏断点：与 landing.css 里 .pg-dock 那个媒体查询必须保持一致 */
 const NARROW = '(max-width: 860px)'
 
-const FALLBACK_RELEASE: ReleaseInfo = {
-  tag: RELEASE_FALLBACK.tag,
-  dmg: RELEASE_FALLBACK.dmg,
-  size: RELEASE_FALLBACK.size,
-  publishedAt: null,
-}
-
 /**
  * 页面根组件：一整张 macOS 桌面。
  * - 顶部是真实比例的菜单栏，Status Trio 的图标就长在右侧系统图标区；
@@ -28,6 +20,8 @@ const FALLBACK_RELEASE: ReleaseInfo = {
  *   之后跟着卡片一起滚，回到顶部再反向滑回来；
  * - 桌面区可滚动，放着首屏文案、功能列表、尺寸预览与隐私说明；
  * - 图标状态提升到这里，菜单栏小图标、设置面板与预览大图永远同源。
+ *
+ * 版本号 / 下载链接等发布信息是 `src/app.ts` 里的常量（发版手动改），这里不再有异步状态。
  */
 export function LandingPage() {
   // 菜单栏上那个图标：设置面板停靠时要对准它的中心
@@ -40,22 +34,10 @@ export function LandingPage() {
   const [panelHeight, setPanelHeight] = useState(0)
   const [theme, setTheme] = useState<ThemePref>(getThemePref)
   const [status, setStatus] = useState<StatusIconState>(DEFAULT_STATUS)
-  const [release, setRelease] = useState<ReleaseInfo>(FALLBACK_RELEASE)
   const [scrolled, setScrolled] = useState(false)
   // 窄屏下面板退化成文档流里的一长条（见 landing.css 的 860px 断点），默认收起来，
   // 让首屏直接是文案；宽屏则默认展开，挂着菜单栏下方当主角。断点两处必须一致。
   const [settingsOpen, setSettingsOpen] = useState(() => !window.matchMedia(NARROW).matches)
-
-  // 版本号 / DMG 直链取 GitHub 最新发布；失败则静默回落到内置兜底
-  useEffect(() => {
-    let alive = true
-    void fetchLatestRelease().then((info) => {
-      if (alive) setRelease(info)
-    })
-    return () => {
-      alive = false
-    }
-  }, [])
 
   const patchStatus = useCallback((patch: Partial<StatusIconState>) => {
     setStatus((prev) => ({ ...prev, ...patch }))
@@ -132,7 +114,7 @@ export function LandingPage() {
             onWidth={setPanelWidth}
             onHeight={setPanelHeight}
           />
-          <Hero release={release} />
+          <Hero />
           <Features />
           <MenubarPreview
             state={status}
@@ -140,7 +122,7 @@ export function LandingPage() {
             panelWidth={panelWidth}
             panelHeight={panelHeight}
           />
-          <Details release={release} />
+          <Details />
         </div>
       </div>
     </div>

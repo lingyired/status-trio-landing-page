@@ -95,6 +95,26 @@ export function BaiduMark({ size = 16 }: { size?: number }) {
   )
 }
 
+/** 更新日志：时钟（历史） */
+export function ClockMark({ size = 12 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} {...stroke} aria-hidden>
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="M12 7.5V12l3 1.85" />
+    </svg>
+  )
+}
+
+/** 关闭（弹层右上角） */
+export function CloseMark({ size = 16 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} {...stroke} strokeWidth={1.9} aria-hidden>
+      <path d="M6.5 6.5l11 11" />
+      <path d="M17.5 6.5l-11 11" />
+    </svg>
+  )
+}
+
 /** 复制按钮：点击写入剪贴板，短暂切换成「已复制」。 */
 export function CopyButton({ text, labels }: { text: string; labels: { copy: string; copied: string } }) {
   const [copied, setCopied] = React.useState(false)

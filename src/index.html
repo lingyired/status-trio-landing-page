@@ -34,8 +34,7 @@
         document.head.appendChild(link)
       })()
     </script>
-    <!-- 版本号来自 GitHub API：提前建连，省掉一次 DNS + TLS 往返 -->
-    <link rel="preconnect" href="https://api.github.com" crossorigin />
+    <!-- 页面不连任何第三方接口：版本号 / 下载链接 / 更新日志都取自仓库里的快照常量 -->
     <meta
       name="description"
       content="Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。"

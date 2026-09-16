@@ -29,20 +29,37 @@ corepack pnpm preview
 corepack pnpm install --store-dir "$PWD/.pnpm-store"
 ```
 
+## 发布新版
+
+页面**不连任何第三方接口**：版本号、下载链接、更新日志全部是仓库里的快照，发版后手动同步三处。
+
+```bash
+./scripts/snapshot-releases.sh     # 刷新 src/release-notes.json（更新日志弹层的数据源）
+corepack pnpm run build
+./deploy.sh
+```
+
+1. `src/app.ts` 的 `RELEASE` —— `tag` / `size`（口径 = 资产字节 ÷ 1048576 保留 1 位）/ `dmg` 链接；
+2. `src/app.ts` 的 `MIRRORS` —— 重新上传两个网盘并换上新的分享链接（**旧链接会挂着旧版 DMG**）；
+3. `src/release-notes.json` —— 由上面的脚本从 GitHub releases 重新快照，弹层直接读它。
+
 ## 结构
 
 ```
 src/
-  app.ts                  品牌常量 + GitHub 发布信息（版本 / 体积 / 下载链接运行时拉取，失败回落内置值）
+  app.ts                  品牌常量 + 当前发布快照（版本 / 体积 / DMG 链接 / 网盘镜像，发版手动改）
+  release-notes.json      更新日志弹层的数据源：release 正文的本地快照，由脚本刷新
+  changelog.ts            把 release note（中英混排 markdown）按语言拆成可渲染的块
   copy.ts                 中英双语文案字典（zh 为基准，en 由 Copy 类型约束，键必须成对）
+  rich.tsx                极简行内富文本（`**粗体**` + `` `行内代码` ``）
   i18n.tsx                语言上下文：默认跟随浏览器语言，localStorage 持久化
   theme.ts                深浅主题：默认跟随系统，可手动切换
   status/StatusIcon.tsx   120×120 状态图标（电池弧 + Wi-Fi 三档 + 音量五档），纯数据驱动
   status/controls.tsx     设置面板控件（滑杆 / 开关 / 分段 / 下拉）
   stage/MacMenuBar.tsx    macOS 菜单栏，含系统图标区里的 Status Trio 图标（兼设置面板开关）
   stage/time.ts           菜单栏时钟
-  sections/               Hero / SettingsDock + SettingsPanel（浮动设置面板，
-                          滚动时落到 MenubarPreview 右侧的槽位）/ Features（一句话）/
+  sections/               Hero（含更新日志弹层 ChangelogDialog）/ SettingsDock + SettingsPanel
+                          （浮动设置面板，滚动时落到 MenubarPreview 右侧的槽位）/ Features（一句话）/
                           MenubarPreview / Troubleshoot / Details
   styles/                 tokens.css（设计变量，含 dark / light 两套）+ landing.css
 ```

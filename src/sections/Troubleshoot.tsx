@@ -1,18 +1,6 @@
-import React from 'react'
 import { useI18n } from '../i18n'
+import { rich } from '../rich'
 import { AlertMark, CopyButton, MenuBarMark } from './icons'
-
-/**
- * 极简行内富文本：只认 `**粗体**` 和 `` `行内代码` ``。
- * 文案放在 copy.ts 里要保持可读，所以在渲染时再解析，而不是把 DOM 塞进字典。
- */
-function rich(text: string): React.ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) return <b key={i}>{part.slice(2, -2)}</b>
-    if (part.startsWith('`') && part.endsWith('`')) return <code key={i}>{part.slice(1, -1)}</code>
-    return part
-  })
-}
 
 /**
  * 排障：安装后打不开。

@@ -41,7 +41,9 @@ corepack pnpm run build
 
 1. `src/app.ts` 的 `RELEASE` —— `tag` / `size`（口径 = 资产字节 ÷ 1048576 保留 1 位）/ `dmg` 链接；
 2. `src/app.ts` 的 `MIRRORS` —— 重新上传两个网盘并换上新的分享链接（**旧链接会挂着旧版 DMG**）；
-3. `src/release-notes.json` —— 由上面的脚本从 GitHub releases 重新快照，弹层直接读它。
+3. `src/release-notes.json` —— 由上面的脚本从 GitHub releases 重新快照，弹层直接读它；
+4. 界面有变化时：换 `public/screenshots/*.webp`，并**回头看一眼文案有没有过期**
+   （v1.1.0 加了程序坞模式，「没有 Dock 图标」那套说法就是这时候改掉的）。
 
 ## 结构
 
@@ -60,8 +62,17 @@ src/
   stage/time.ts           菜单栏时钟
   sections/               Hero（含更新日志弹层 ChangelogDialog）/ SettingsDock + SettingsPanel
                           （浮动设置面板，滚动时落到 MenubarPreview 右侧的槽位）/ Features（一句话）/
-                          MenubarPreview / Troubleshoot / Details
+                          MenubarPreview / Screenshots（真机截图，懒加载 + 点开看大图）/ Troubleshoot / Details
   styles/                 tokens.css（设计变量，含 dark / light 两套）+ landing.css
+```
+
+`public/` 里的东西原样拷进 `dist/` 根、文件名不带哈希，所以代码里按固定路径引用：
+
+```
+public/
+  og.jpg                  社交分享图（`src/index.html` 里写的是绝对 URL）
+  wallpaper/*.webp        桌面壁纸，首帧由 index.html 的内联脚本按主题预加载
+  screenshots/*.webp      截图区素材；源图在 App 仓库的 `screenshots/`，压成 WebP 后放这儿
 ```
 
 ## 图标几何

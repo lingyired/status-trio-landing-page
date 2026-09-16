@@ -5,6 +5,7 @@ import { Hero } from '../sections/Hero'
 import { SettingsDock } from '../sections/SettingsDock'
 import { Features } from '../sections/Features'
 import { MenubarPreview } from '../sections/MenubarPreview'
+import { Screenshots } from '../sections/Screenshots'
 import { Details } from '../sections/Details'
 import { applyTheme, getThemePref, WALLPAPER, type ThemePref } from '../theme'
 import '../styles/tokens.css'
@@ -122,6 +123,8 @@ export function LandingPage() {
             panelWidth={panelWidth}
             panelHeight={panelHeight}
           />
+          {/* 截图区：只有它需要知道主题（图标状态那张有浅 / 深两版） */}
+          <Screenshots theme={theme} />
           <Details />
         </div>
       </div>

@@ -51,7 +51,7 @@ const zh = {
   html: {
     title: 'Status Trio · iPhone duo 同款三合一图标',
     description:
-      'Status Trio 把 Wi-Fi、电池和音量合并成一个菜单栏图标。原生 Swift 写的 macOS 小工具，不联网、不含遥测。',
+      'Status Trio 把 Wi-Fi、电池和音量合并成一个图标，可放在菜单栏或程序坞。原生 Swift 写的 macOS 小工具，不联网、不含遥测。',
   },
   /** macOS 菜单栏里的应用菜单项，两种语言下都保持英文（与真实系统一致） */
   menu: ['File', 'Edit', 'View', 'Window', 'Help'],
@@ -61,9 +61,9 @@ const zh = {
   appHint: '点一下开合设置面板',
 
   hero: {
-    eyebrow: 'macOS 菜单栏小工具',
+    eyebrow: 'macOS 菜单栏 / 程序坞小工具',
     title: 'iPhone duo 同款三合一图标',
-    desc: 'Status Trio 是一个原生 macOS 菜单栏应用，将 Wi-Fi、电池和音量整合进一个紧凑、可配置的菜单栏图标。允许自定义多种外观配置。',
+    desc: 'Status Trio 是一个原生 macOS 应用，把 Wi-Fi、电池和音量整合进一个紧凑、可配置的图标 —— 放在菜单栏、程序坞，或者两处都有。',
     ctaPrimary: '下载 macOS 版',
     ctaSecondary: '在 GitHub 上查看',
     ctaAll: '全部版本',
@@ -108,6 +108,26 @@ const zh = {
   preview: {
     label: '菜单栏实际尺寸',
     caption: '它平时就这么小。',
+  },
+
+  /** 截图区（排在尺寸预览下面）：全是真机截图，图片在 public/screenshots/ 下，
+   *  一律懒加载、点击看大图。1.1 起图标能放程序坞，所以这里主打程序坞。 */
+  screenshots: {
+    eyebrow: '截图',
+    title: '菜单栏、程序坞，同一个图标。',
+    desc: '状态图标可以只放菜单栏、只放程序坞，或者两处同时显示；程序坞图标的背景样式也能单独设置。下面都是真机截图，点开可以看大图。',
+    dockGroup: '程序坞模式',
+    iconsGroup: '程序坞图标背景',
+    statesGroup: '图标状态一览',
+    captions: {
+      dockDark: '深色背景',
+      dockLight: '浅色背景',
+      dockBt: '蓝牙面板',
+      dockIcons: '深色 / 浅色 / 透明，三种背景样式',
+      iconStates: '电池、Wi-Fi、音量共 27 种状态',
+    },
+    zoom: '点开看大图',
+    close: '关闭',
   },
 
   wifiState: {
@@ -182,7 +202,7 @@ const zh = {
     menubar: {
       title: '打开后好像什么都没发生？',
       paras: [
-        '这是正常的 —— Status Trio 是**纯菜单栏应用**，没有窗口，也没有 Dock 图标。打开之后请往屏幕右上角看。',
+        '这是正常的 —— Status Trio 没有主窗口，打开之后只是在菜单栏（或者你设置的程序坞）里多一个图标，默认在菜单栏，所以请往屏幕右上角看。',
         '图标就在菜单栏右侧、控制中心左边。如果没看到，可能是被刘海挡住或被太多图标挤了出去：按住 **⌘** 拖动图标，就能把它挪到看得见的位置。',
         '想确认它在不在跑：左键点一下会出状态弹层，右键会出系统菜单 —— 出得来就说明它好着呢。',
       ],
@@ -211,7 +231,7 @@ const en: Copy = {
   html: {
     title: 'Status Trio · The same 3-in-1 icon as iPhone Duo',
     description:
-      'Status Trio combines Wi-Fi, battery, and volume into a single menu bar icon. A native Swift utility for macOS — no network access, no telemetry.',
+      'Status Trio combines Wi-Fi, battery, and volume into a single icon you can keep in the menu bar or the Dock. A native Swift utility for macOS — no network access, no telemetry.',
   },
   menu: ['File', 'Edit', 'View', 'Window', 'Help'],
   langLabel: 'Language',
@@ -220,9 +240,9 @@ const en: Copy = {
   appHint: 'Click to show or hide the settings',
 
   hero: {
-    eyebrow: 'A macOS menu bar utility',
+    eyebrow: 'A macOS menu bar & Dock utility',
     title: 'The same 3-in-1 icon as iPhone Duo',
-    desc: 'Status Trio is a native macOS menu bar app that folds Wi-Fi, battery, and volume into a single compact, configurable menu bar icon — with several appearance presets to choose from.',
+    desc: 'Status Trio is a native macOS app that folds Wi-Fi, battery, and volume into one compact, configurable icon — in your menu bar, in the Dock, or in both at once.',
     ctaPrimary: 'Download for macOS',
     ctaSecondary: 'View on GitHub',
     ctaAll: 'All releases',
@@ -264,6 +284,24 @@ const en: Copy = {
   preview: {
     label: 'Actual menu bar size',
     caption: 'That is how small it really is.',
+  },
+
+  screenshots: {
+    eyebrow: 'Screenshots',
+    title: 'Menu bar, Dock — the same icon.',
+    desc: 'The status icon can live in the menu bar, in the Dock, or in both at once, and the Dock icon takes its own background style. Everything below is a real screenshot — click one to see it full size.',
+    dockGroup: 'Dock mode',
+    iconsGroup: 'Dock icon backgrounds',
+    statesGroup: 'Icon states',
+    captions: {
+      dockDark: 'Dark background',
+      dockLight: 'Light background',
+      dockBt: 'Bluetooth panel',
+      dockIcons: 'Dark / light / clear — three background styles',
+      iconStates: '27 battery, Wi-Fi and volume states',
+    },
+    zoom: 'Click to enlarge',
+    close: 'Close',
   },
 
   wifiState: {
@@ -336,7 +374,7 @@ const en: Copy = {
     menubar: {
       title: 'It opened, but nothing seemed to happen?',
       paras: [
-        'That is expected — Status Trio is a **menu bar-only app**. There is no window and no Dock icon. Look at the top-right corner of your screen.',
+        'That is expected — Status Trio has no main window. Opening it just adds an icon to your menu bar (or to the Dock, if you set it up that way); by default that is the menu bar, so look at the top-right corner of your screen.',
         'The icon sits on the right side of the menu bar, just left of Control Center. If you cannot spot it, the notch may be covering it or too many other items pushed it aside: hold **⌘** and drag it somewhere visible.',
         'To check whether it is running: left-click for the status popover, right-click for the standard menu. If those appear, it is alive and well.',
       ],

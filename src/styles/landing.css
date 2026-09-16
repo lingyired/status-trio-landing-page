@@ -1314,6 +1314,124 @@
   font-size: 0.75rem;
 }
 
+/* ══ 截图区 ══ */
+/* 图片走 public/screenshots/（固定路径、不参与打包哈希），全部 lazy。
+   `<img>` 上都带了 width/height，比例已知 → 加载前位置就占好了，不会抖。 */
+.shot-group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.shot-group-label {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.shot-stack {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.shot {
+  display: grid;
+  gap: 0.45rem;
+}
+
+/* 整张图就是一个按钮：点击在弹层里看大图 */
+.shot-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.shot-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.shot-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.shot-btn img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shot-cap {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 0.78rem;
+}
+
+/* 看大图：遮罩沿用更新日志弹层那套（同一个 --scrim-strong 与淡入动画），
+   点遮罩 / Esc / 右上角都能关。图片按容器宽度等比缩放，比视口高的图内部滚动。 */
+.shot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: clamp(0.75rem, 3vw, 2rem);
+  background: var(--scrim-strong);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: cl-fade 160ms ease;
+  cursor: zoom-out;
+}
+
+.shot-zoom {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  cursor: default;
+  animation: cl-rise 180ms ease;
+}
+
+.shot-zoom img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.shot-close {
+  position: absolute;
+  top: clamp(0.9rem, 3vw, 1.5rem);
+  right: clamp(0.9rem, 3vw, 1.5rem);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--field-border);
+  border-radius: 10px;
+  background: var(--field-bg);
+  color: var(--ink);
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.shot-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ══ 排障：安装后打不开 ══ */
 .fix-list {
   display: grid;

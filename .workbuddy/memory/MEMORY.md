@@ -6,9 +6,12 @@
 ## 硬约定
 
 1. 运行时只有 react / react-dom，样式全本地 CSS（对齐 fund01 landing）。
-2. **视觉常量回源 App 源码**（`duo-menubar/Sources/StatusTrioCore/`）：`defaultIconSize = 28`、
-   范围 `20...32`；画布 120 / 弧半径 51.5 / 缺口宽 数字 64、闪电 50；闪电倍率 = 字形高 ÷ 闪电高
-   × 220 ÷ 180。图标尺寸统一走 `APP.iconSize`（`src/app.ts`），栏高留余量（28px → 36px）。
+2. **视觉常量回源 App 源码**（`Sources/StatusTrioCore/`）：⚠️ **v1.2.0 起源码里的默认值是
+   `defaultIconSize = 24`、范围 `iconSizeRange = 16...36`、`defaultStatusCenterSymbolScale = 1.6`
+   （Wi-Fi / 蓝牙图标 160%）** —— 落地页的 `APP.iconSize` **还停在 28**（注释也还写着 20–32），
+   **未对齐，待用户拍板**。画布 120 / 弧半径 51.5 / 缺口宽 数字 64、闪电 50；闪电倍率 = 字形高 ÷
+   闪电高 × 220 ÷ 180（分母那个 180 就是旧的 Wi-Fi 缩放）。图标尺寸统一走 `APP.iconSize`
+   （`src/app.ts`，用在 `MacMenuBar` 和 `MenubarPreview` 的「实际尺寸」带子），栏高留余量。
 3. **不开浏览器自测**。验证链 = `tsc --noEmit` + `corepack pnpm run build` + 产物 grep
    +（几何类）数值核算；视觉交用户目视。
 4. **部署 / 提交是红线**：没说「部署」不动 nginx / rsync；git 只在用户说了才 commit / push。
@@ -24,7 +27,7 @@
 9. **页面不连任何第三方接口**（2026-09-16 起；之前那套运行时拉 `api.github.com` 已整个拿掉）。
    发布信息全是仓库里的手动快照，**发新版要动三处**：`src/app.ts` 的 `RELEASE`（tag / 体积 /
    DMG 链接）+ 同文件的 `MIRRORS`（重传网盘、换链接）+ `./scripts/snapshot-releases.sh` 刷新
-   `src/release-notes.json`。`size` = 资产字节 / 1048576 保留 1 位（v1.1.0 的 3313040 B → `3.2 MB`）。
+   `src/release-notes.json`。`size` = 资产字节 / 1048576 保留 1 位（v1.2.0 的 4005867 B → `3.8 MB`）。
    改完 grep 产物核对。
 10. 要提前被 HTML 引用的静态资源放 `public/`（原样拷到 `dist/` 根、文件名不带哈希）。
     ⚠️ 构建摘要**不列** public 拷的文件 → 核对直接 `find dist`。
@@ -49,12 +52,13 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
 
 - **`mirrors`（网盘镜像）**：链接在 `src/app.ts` 的 `MIRRORS`（`quark` / `baidu` / `baiduCode`），
   与 `RELEASE` 同源 —— **发新版必须重传两个网盘并换链接**。百度提取码拼进 URL
-  （`?pwd=dp90`，点开自动填码），`baiduCode` 只为展示。渲染两处：首屏 `.hero-cta` 追加两个
+  （`?pwd=jqjr`，点开自动填码），`baiduCode` 只为展示。渲染两处：首屏 `.hero-cta` 追加两个
   `.btn--ghost`（`QuarkMark` / `BaiduMark`，标签复用 `t.mirrors.*`）+ 「系统要求」段
   （`Details.tsx` `#requirements`）CTA 下方的 `.req-mirrors*`。流程见 skill `release-netdisk-mirror`。
-  ✅ **2026-09-16 已重传 v1.1.0**：夸克 `s/e28ddb4cf8da`（公开、无码）、百度
-  `s/1HU-0RoFm2rMrlQ4TuPmjPw?pwd=18kk`（码 `18kk`），两个都是永久分享，已与页面版本号对齐。
-  旧版 v1.0.2 的文件与分享仍留在两个网盘上（**没删**），只是页面不再引用。
+  ✅ **2026-09-18 已重传 v1.2.0**：夸克 `s/33fc8dc5b7b3`（公开、无码）、百度
+  `s/1huwDORxOPQky6nVDB4zV9g?pwd=jqjr`（码 `jqjr`），两个都是永久分享，已与页面版本号对齐。
+  旧版 v1.0.2 / v1.1.0 的文件与分享仍留在两个网盘上（**没删**），只是页面不再引用。
+  核对手法：夸克 `share-detail --url <新链接>` 看里面唯一文件是不是新版本 DMG（换版本最易挂错）。
 - **`fund01`（菜单栏联动）**：顶部多两个分组签（`总览 +2.71%` / `海外投资 +2.25%`）→ 去
   `https://lingai.net/fund01/`。**位置：语言 / 主题按钮左边**（放 Status Trio 图标左边被否过）。
   组件 `src/stage/Fund01Groups.tsx`，类名沿用 fund01 landing；**涨红跌绿**（`--rise` / `--fall`：
@@ -74,7 +78,11 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
   block 只有 `h` / `list` / `p`。按 `## English` / `## 中文` 取对应语言，**没有分区标记的
   （≤v1.0.2）两种语言都显示**；丢掉「First launch / 首次启动」整段、围栏代码块，以及 v1.0.2 那种
   没有小标题的裸安装说明（`INSTALL_NOTE` 特征词 `xattr` / `quarantine` / `Privacy & Security` /
-  `隐私与安全性` / `Open Anyway`）。
+  `隐私与安全性` / `Open Anyway`）。**引用块（`> …`，v1.2.0 中文尾巴上有一条）去掉 `>` 标记后
+  当普通段落**（`**粗体**` 交给 `rich()` 渲染）。
+  ⚠️ 新正文形态要**拿真数据实测**：把 `changelog.ts` 编成 commonjs 喂 `release-notes.json`
+  跑断言（`toChangelog` 是真函数，不是纯 grep 能验的）。**别用 `grep '# '` 当残留检查** ——
+  v1.2.0 正文里有合法的 `issue #30`，会假阳性。
 - 组件 `src/sections/ChangelogDialog.tsx`（挂在 Hero 里，无 props 之外的状态）：遮罩 + 面板
   （沿用 `.card` 毛玻璃）、头部固定 + 列表内部滚动；Esc / 点遮罩 / 右上角关闭，锁 `body.overflow`、
   焦点交给关闭按钮；语言切换即时跟随（`useMemo`）。入口 `.hero-verline` = `.hero-all` 链接 +
@@ -101,6 +109,10 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
   锁 `body.overflow`；图按容器宽等比缩放，比视口高的内部滚动。
 - **没纳入**：`normal.png` / `popup.png` / `status-style.png` 是旧版视觉（菜单栏模式、英文界面、
   旧弹窗布局）且分辨率低（494 / 646 / 288 宽），与 1.1 的 UI 对不上。
+- ⚠️ **2026-09-18：App 仓库的 `screenshots/` 又更新了** —— `status-trio-icon-states{,-dark}.png`
+  与 `status-trio-dock-icons.png` 当天 21:10 重新生成（体积都明显变大：图标状态 466 KB、
+  程序坞图标 653 KB），另多两张 `menu-bar-airpods.jpg` / `menu-bar-wifi.jpg`（21:53）。
+  落地页用的还是 09-16 那版 webp，**没换**（用户本轮只要求换版本 + 网盘 + 上线）。
 
 ## 仓库 / 部署 / 命令
 
@@ -118,7 +130,21 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
 - 命令：`corepack pnpm dev` / `corepack pnpm run build`（pnpm 不在 PATH，必须走 corepack）、
   `./node_modules/.bin/tsc --noEmit`、`./deploy.sh`。装依赖加 `--store-dir "$PWD/.pnpm-store"`
   （全局 store 沙箱外写不进去），装完删该目录。
+- **「产物是不是这棵树编的」不用重跑构建**：比 mtime —— 改动过的源文件 mtime 都 ≤ `dist/`
+  的时间戳，就说明线上那份 dist 正是当前工作区编出来的（提交前照样能拿它当验证证据）。
 - 壁纸 `public/wallpaper/{dark,light}.webp`：**必须 1920×1080 WebP**，源图
   `~/Pictures/Golden_Dark_6k.png` / `GoldenGate_6k.png`（6016×4147 → 16:9 中心裁切 + LANCZOS
   缩放，不许非等比拉伸）。sips 编不了 WebP 且 `-c` 是原生分辨率裁切 → 用托管 venv：
   `/Users/lingsmbp/.workbuddy/binaries/python/envs/default/bin/python`。
+
+## 待拍板（v1.2.0 发版后挂着，2026-09-19 用户明确「都不用动先」）
+
+1. **`APP.iconSize` 未对齐**：落地页还是 28，v1.2.0 起源码是 `defaultIconSize = 24` /
+   范围 16...36 / `defaultStatusCenterSymbolScale = 1.6`（旧值 1.8）。`StatusIcon` 的 Wi-Fi
+   字形比例也按 1.8 推的 —— 是**视觉改动**，要一起动才自洽，等用户目视拍板。
+2. **设置面板 mock 是 1.1 版**：1.2.0 把音量样式 / 图标位置 / 环形描边改成了卡片选择器，
+   还多了蓝牙、电量详情页；`copy.ts` 的 `settings.hint`（「和 App 里的设置一模一样」）已不准。
+3. **截图素材**：App 仓库 `screenshots/` 09-18 21:10 又生成过（另多两张 AirPods / Wi-Fi 图），
+   落地页仍是 09-16 的 webp。
+4. **上游正文缺节**：v1.2.0 的英文区没有 `## 更新下载`（镜像回退）那节 → 英文页日志少一条；
+   是 App 仓库正文的问题，不是解析器的锅。

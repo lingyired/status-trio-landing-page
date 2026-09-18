@@ -8,7 +8,8 @@
  *   ① 双语（v1.0.3 起）：`## English` / `## 中文` 两个区，各自带 `##` 小标题 + `-` 列表；
  *   ② 单语（v1.0.2 及更早）：没有分区标记，整段照显；
  *   ③ 每条尾部还挂着「首次启动要跑 xattr」的说明与 bash 代码块 —— 落地页已有排障章节，
- *      弹层里不重复，整段丢掉。
+ *      弹层里不重复，整段丢掉；
+ *   ④ 引用块（`> …`）：剥掉标记当普通段落，块级词汇保持 h / list / p 三种。
  */
 
 import notes from './release-notes.json'
@@ -77,7 +78,9 @@ function parseBody(body: string, lang: Lang): NoteBlock[] {
   }
 
   for (const raw of body.split(/\r?\n/)) {
-    const line = raw.trim()
+    // 引用块（`> **提示**：…`，v1.2.0 的中文区尾巴上有一条）：剥掉标记当普通段落渲染，
+    // 否则弹层里会显示出一个字面的「> 」（`**粗体**` 由渲染时的 rich() 处理）。
+    const line = raw.trim().replace(/^>\s?/, '')
 
     if (fence) {
       if (line.startsWith('```')) fence = false

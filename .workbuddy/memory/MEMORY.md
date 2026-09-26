@@ -27,7 +27,7 @@
 9. **页面不连任何第三方接口**（2026-09-16 起；之前那套运行时拉 `api.github.com` 已整个拿掉）。
    发布信息全是仓库里的手动快照，**发新版要动三处**：`src/app.ts` 的 `RELEASE`（tag / 体积 /
    DMG 链接）+ 同文件的 `MIRRORS`（重传网盘、换链接）+ `./scripts/snapshot-releases.sh` 刷新
-   `src/release-notes.json`。`size` = 资产字节 / 1048576 保留 1 位（v1.2.0 的 4005867 B → `3.8 MB`）。
+   `src/release-notes.json`。`size` = 资产字节 / 1048576 保留 1 位（v1.3.0 的 4244534 B → `4.0 MB`）。
    改完 grep 产物核对。
 10. 要提前被 HTML 引用的静态资源放 `public/`（原样拷到 `dist/` 根、文件名不带哈希）。
     ⚠️ 构建摘要**不列** public 拷的文件 → 核对直接 `find dist`。
@@ -52,13 +52,21 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
 
 - **`mirrors`（网盘镜像）**：链接在 `src/app.ts` 的 `MIRRORS`（`quark` / `baidu` / `baiduCode`），
   与 `RELEASE` 同源 —— **发新版必须重传两个网盘并换链接**。百度提取码拼进 URL
-  （`?pwd=jqjr`，点开自动填码），`baiduCode` 只为展示。渲染两处：首屏 `.hero-cta` 追加两个
+  （`?pwd=<码>`，点开自动填码），`baiduCode` 只为展示。渲染两处：首屏 `.hero-cta` 追加两个
   `.btn--ghost`（`QuarkMark` / `BaiduMark`，标签复用 `t.mirrors.*`）+ 「系统要求」段
   （`Details.tsx` `#requirements`）CTA 下方的 `.req-mirrors*`。流程见 skill `release-netdisk-mirror`。
-  ✅ **2026-09-18 已重传 v1.2.0**：夸克 `s/33fc8dc5b7b3`（公开、无码）、百度
-  `s/1huwDORxOPQky6nVDB4zV9g?pwd=jqjr`（码 `jqjr`），两个都是永久分享，已与页面版本号对齐。
-  旧版 v1.0.2 / v1.1.0 的文件与分享仍留在两个网盘上（**没删**），只是页面不再引用。
+  ✅ **2026-09-26 已重传 v1.3.3**：夸克 `s/40dc4ca5757c`（公开、无码）、百度
+  `s/1KoT_FPwO1dm2RX7qsfbe4w?pwd=czuu`（码 `czuu`），两个都是永久分享，已与页面版本号对齐。
+  （v1.3.1 / v1.3.2 跳过了没上，正文仍进更新日志快照。）
+  旧版 v1.0.2 / v1.1.0 / v1.2.0 / v1.3.0 的文件与分享仍留在两个网盘上（**没删**），只是页面不再引用。
   核对手法：夸克 `share-detail --url <新链接>` 看里面唯一文件是不是新版本 DMG（换版本最易挂错）。
+  ⚠️ **夸克上传撞重名会静默改名**：目录里已有同名文件时，新上传的会变成 `xxx(1).dmg`
+  （`instantUpload:true` 是秒传，不代表没生成新副本）。**分享前先 `browse` 看目录**，
+  要挂原名文件就得拿它的 fid 再 `share`；`share` 直接吃 `browse` 返回的 `~1…|…` **加密 fid**（实测可用）。
+  ⚠️ **两个网盘都没有可用的「下载次数」API**（2026-09-21 实测，详见 skill
+  `release-netdisk-mirror` §8）：夸克有 `click_pv` / `save_pv` / `download_pv` 字段但三方
+  token 下是 `-1` / 0，百度则连字段都没有。要统计就看 GitHub Release 的 `download_count`，
+  但那要先推翻「页面不连任何第三方接口」这条约定。
 - **`fund01`（菜单栏联动）**：顶部多两个分组签（`总览 +2.71%` / `海外投资 +2.25%`）→ 去
   `https://lingai.net/fund01/`。**位置：语言 / 主题按钮左边**（放 Status Trio 图标左边被否过）。
   组件 `src/stage/Fund01Groups.tsx`，类名沿用 fund01 landing；**涨红跌绿**（`--rise` / `--fall`：
@@ -72,17 +80,22 @@ Fund01Copy | null }` —— 可空的理由都是「只有中文页用得到」�
 操作）→ 现在数据也在仓库里，**打开即渲染、没有加载态**。
 
 - 数据：`src/release-notes.json`（release 正文 + tag + publishedAt 的本地快照，新 → 旧）。
-  刷新靠 `./scripts/snapshot-releases.sh`（curl GitHub releases → 过滤 prerelease → 按时间倒序
-  写回，python3 只用标准库）。**发版后必须跑一次**，见硬约定 9。
+  刷新靠 `./scripts/snapshot-releases.sh`（**优先 `gh api`**（已登录）/ 回退匿名 curl → 过滤
+  prerelease → 按时间倒序写回，python3 只用标准库）。⚠️ **匿名 curl 在本机恒 403**（直连与
+  代理出口 IP 都被限流），所以脚本认 `/opt/homebrew/bin/gh`（gh 不在 PATH）。**发版后必须跑一次**，
+  见硬约定 9。⚠️ 同理，从 GitHub 下 DMG 直连会长时间 0 字节 → 加 `-x http://127.0.0.1:10808`。
 - 解析：`src/changelog.ts` 的 `toChangelog(RELEASE_NOTES, lang)` → `{tag, date, blocks[]}`，
   block 只有 `h` / `list` / `p`。按 `## English` / `## 中文` 取对应语言，**没有分区标记的
   （≤v1.0.2）两种语言都显示**；丢掉「First launch / 首次启动」整段、围栏代码块，以及 v1.0.2 那种
   没有小标题的裸安装说明（`INSTALL_NOTE` 特征词 `xattr` / `quarantine` / `Privacy & Security` /
   `隐私与安全性` / `Open Anyway`）。**引用块（`> …`，v1.2.0 中文尾巴上有一条）去掉 `>` 标记后
   当普通段落**（`**粗体**` 交给 `rich()` 渲染）。
+  已实测覆盖的形态（2026-09-26 补 v1.3.1~1.3.3）：`##` / `###` 小标题 → `h`；**只有裸列表、
+  没有小标题**（v1.3.2）→ 整段落成 `list`、不产生空 `h`；`## First launch` 由 `zoneOf` 判 `skip`。
   ⚠️ 新正文形态要**拿真数据实测**：把 `changelog.ts` 编成 commonjs 喂 `release-notes.json`
   跑断言（`toChangelog` 是真函数，不是纯 grep 能验的）。**别用 `grep '# '` 当残留检查** ——
-  v1.2.0 正文里有合法的 `issue #30`，会假阳性。
+  v1.2.0 正文里有合法的 `issue #30`，会假阳性。⚠️ 写断言时别期望 v1.0.2 及更早「是中文」
+  —— 那几条正文只有英文（无分区 → 按 shared 走），会假失败。
 - 组件 `src/sections/ChangelogDialog.tsx`（挂在 Hero 里，无 props 之外的状态）：遮罩 + 面板
   （沿用 `.card` 毛玻璃）、头部固定 + 列表内部滚动；Esc / 点遮罩 / 右上角关闭，锁 `body.overflow`、
   焦点交给关闭按钮；语言切换即时跟随（`useMemo`）。入口 `.hero-verline` = `.hero-all` 链接 +

@@ -22,12 +22,12 @@ export const APP = {
 } as const
 
 /** 当前发布：版本号 / DMG 直链 / 体积。发新版改这里。
- *  `size` 口径 = 资产字节 / 1048576 保留 1 位（v1.2.0 的 4005867 B → `3.8 MB`）。 */
+ *  `size` 口径 = 资产字节 / 1048576 保留 1 位（v1.3.3 的 4972873 B → `4.7 MB`）。 */
 export const RELEASE = {
-  tag: 'v1.2.0',
+  tag: 'v1.3.3',
   /** DMG 体积，用于按钮上的副标题 */
-  size: '3.8 MB',
-  dmg: 'https://github.com/lingyired/status-trio/releases/download/v1.2.0/StatusTrio-1.2.0.dmg',
+  size: '4.7 MB',
+  dmg: 'https://github.com/lingyired/status-trio/releases/download/v1.3.3/StatusTrio-1.3.3.dmg',
 } as const
 
 /** 国内网盘镜像：与 GitHub 同一份 DMG，永久链接。仅中文页面展示（英文页不出现）。
@@ -35,10 +35,10 @@ export const RELEASE = {
  *  百度的提取码直接拼进 URL（`?pwd=`），点开即自动填码、用户不用手输；
  *  另存一份 `baiduCode` 只是为了页面上还能把码展示出来。 */
 export const MIRRORS = {
-  quark: 'https://pan.quark.cn/s/33fc8dc5b7b3',
-  baidu: 'https://pan.baidu.com/s/1huwDORxOPQky6nVDB4zV9g?pwd=jqjr',
+  quark: 'https://pan.quark.cn/s/40dc4ca5757c',
+  baidu: 'https://pan.baidu.com/s/1KoT_FPwO1dm2RX7qsfbe4w?pwd=czuu',
   /** 百度网盘的提取码（已含在上面链接里，这里仅用于页面展示） */
-  baiduCode: 'jqjr',
+  baiduCode: 'czuu',
 } as const
 
 /** 姊妹项目 Fund01 的落地页：菜单栏那两个联动分组点开就是它。

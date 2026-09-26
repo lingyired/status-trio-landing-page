@@ -14,7 +14,18 @@ out=src/release-notes.json
 tmp=$(mktemp)
 trap 'rm -f "$tmp"' EXIT
 
-curl -sSfL --max-time 30 "https://api.github.com/repos/$repo/releases?per_page=100" -o "$tmp"
+# 取 release 列表：**优先用 gh**（已登录，限额 5000/h），拿不到再退回匿名 curl。
+# ⚠️ 匿名 `api.github.com` 在本机常年 403（走代理的出口 IP 也被限流），
+#    别一上来就 curl —— 那样脚本会直接失败。gh 不在 PATH 时认 /opt/homebrew/bin/gh。
+gh_bin=$(command -v gh 2>/dev/null || true)
+if [ -z "$gh_bin" ] && [ -x /opt/homebrew/bin/gh ]; then
+  gh_bin=/opt/homebrew/bin/gh
+fi
+if [ -n "$gh_bin" ]; then
+  "$gh_bin" api "repos/$repo/releases?per_page=100" > "$tmp"
+else
+  curl -sSfL --max-time 30 "https://api.github.com/repos/$repo/releases?per_page=100" -o "$tmp"
+fi
 
 python3 - "$tmp" "$out" <<'PY'
 import json, sys

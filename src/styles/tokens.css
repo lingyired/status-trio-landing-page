@@ -54,6 +54,12 @@
   /* StatusIcon 用到的两个颜色：数字/闪电的颜色，以及它的描边阴影 */
   --sti-value: #ffffff;
   --sti-value-shadow: #000000;
+
+  /* 状态面板（App 弹层 mock）里的几处产品色：电池绿 / 低电量琥珀 / 代理橙 / 蓝牙蓝 */
+  --sp-green: #30d158;
+  --sp-amber: #ffd60a;
+  --sp-orange: #ff9f0a;
+  --sp-blue: #4da3ff;
 }
 
 [data-theme='light'] {
@@ -104,6 +110,12 @@
 
   --sti-value: #1a1c21;
   --sti-value-shadow: #ffffff;
+
+  /* 状态面板产品色的浅色版：压深保证对比度（色相对齐 App 的浅色变体） */
+  --sp-green: #178236;
+  --sp-amber: #a35c00;
+  --sp-orange: #c25e00;
+  --sp-blue: #0066cc;
 }
 
 * {

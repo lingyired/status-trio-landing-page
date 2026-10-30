@@ -20,6 +20,5 @@ export default defineConfig({
   html: {
     template: './src/index.html',
     title: 'Status Trio · iPhone duo 同款三合一图标',
-    favicon: './src/assets/favicon/app-icon-128.png',
   },
 })

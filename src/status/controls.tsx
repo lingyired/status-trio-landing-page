@@ -4,6 +4,7 @@ import React from 'react'
  *  不引入 UI 库——整个 landing 只有 React 一个运行时依赖。 */
 
 export function Slider(props: {
+  id?: string
   label: string
   value: number
   min: number
@@ -14,20 +15,22 @@ export function Slider(props: {
   disabled?: boolean
   onChange: (value: number) => void
 }) {
+  const generatedId = React.useId()
+  const id = props.id ?? `ctl-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`
   // 已填充比例：交给 CSS 用 linear-gradient 画进度色（原生 range 无法直接表达）
   const fill = props.max > props.min ? ((props.value - props.min) / (props.max - props.min)) * 100 : 0
   return (
     <div className="ctl-field">
       <div className="ctl-field-head">
-        <label className="ctl-label" htmlFor={`ctl-${props.label}`}>
+        <label className="ctl-label" htmlFor={id}>
           {props.label}
         </label>
-        <output className="ctl-readout" htmlFor={`ctl-${props.label}`}>
+        <output className="ctl-readout" htmlFor={id}>
           {props.display}
         </output>
       </div>
       <input
-        id={`ctl-${props.label}`}
+        id={id}
         className="ctl-slider"
         type="range"
         min={props.min}
@@ -35,6 +38,7 @@ export function Slider(props: {
         step={props.step ?? 1}
         value={props.value}
         disabled={props.disabled}
+        aria-label={props.label}
         style={{ '--pg-fill': `${fill}%` } as React.CSSProperties}
         onChange={(e) => props.onChange(Number(e.currentTarget.value))}
       />
@@ -47,6 +51,7 @@ export function Toggle(props: {
   /** 右侧说明文字 */
   note?: string
   pressed: boolean
+  disabled?: boolean
   onToggle: () => void
 }) {
   return (
@@ -55,6 +60,7 @@ export function Toggle(props: {
       className="ctl-toggle"
       role="switch"
       aria-checked={props.pressed}
+      disabled={props.disabled}
       onClick={props.onToggle}
     >
       <span className="ctl-toggle-text">
@@ -77,6 +83,7 @@ export function Segmented<T extends string | number>(props: {
   label: string
   value: T
   options: SegmentOption<T>[]
+  disabled?: boolean
   onChange: (value: T) => void
 }) {
   return (
@@ -89,6 +96,7 @@ export function Segmented<T extends string | number>(props: {
             type="button"
             className="ctl-segment"
             aria-pressed={option.value === props.value}
+            disabled={props.disabled}
             onClick={() => props.onChange(option.value)}
           >
             {option.label}
@@ -100,21 +108,26 @@ export function Segmented<T extends string | number>(props: {
 }
 
 export function Select<T extends string>(props: {
+  id?: string
   label: string
   value: T
   options: SegmentOption<T>[]
+  disabled?: boolean
   onChange: (value: T) => void
 }) {
+  const generatedId = React.useId()
+  const id = props.id ?? `ctl-select-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`
   return (
     <div className="ctl-field">
-      <label className="ctl-label" htmlFor={`ctl-select-${props.label}`}>
+      <label className="ctl-label" htmlFor={id}>
         {props.label}
       </label>
       <div className="ctl-select-wrap">
         <select
-          id={`ctl-select-${props.label}`}
+          id={id}
           className="ctl-select"
           value={props.value}
+          disabled={props.disabled}
           onChange={(e) => props.onChange(e.currentTarget.value as T)}
         >
           {props.options.map((option) => (

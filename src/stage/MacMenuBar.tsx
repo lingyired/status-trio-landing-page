@@ -8,12 +8,12 @@ import { useTimeLabel } from './time'
 
 interface Props {
   status: StatusIconState
-  /** 图标按钮本身：设置面板要靠它算对齐位置 */
+  /** 图标按钮本身：状态面板要靠它算对齐位置 */
   iconRef: RefObject<HTMLButtonElement | null>
-  /** 设置面板是否展开：图标按钮据此显示按下态 */
-  settingsOpen: boolean
-  /** 点击菜单栏里的 Status Trio 图标 → 开合菜单栏下方的设置面板 */
-  onToggleSettings: () => void
+  /** 状态面板是否打开：图标按钮据此显示按下态 */
+  panelOpen: boolean
+  /** 点击菜单栏里的 Status Trio 图标 → 开合状态面板 */
+  onTogglePanel: () => void
   theme: ThemePref
   onToggleTheme: () => void
   /** 桌面区已滚动：给菜单栏补一条分割线，避免内容从底下透上来糊在一起 */
@@ -23,19 +23,27 @@ interface Props {
 /**
  * macOS 菜单栏：左侧 Apple logo + 应用菜单，右侧系统图标区。
  * Status Trio 的图标就长在右侧系统图标区里（和真实使用时一样），
- * 它既是状态显示，也是设置面板的开关。
+ * 它既是状态显示，也是状态面板的开关。
  */
 export function MacMenuBar({
   status,
   iconRef,
-  settingsOpen,
-  onToggleSettings,
+  panelOpen,
+  onTogglePanel,
   theme,
   onToggleTheme,
   scrolled,
 }: Props) {
   const { t, lang, toggleLang } = useI18n()
   const time = useTimeLabel(lang)
+  const networkLabel =
+    status.networkKind === 'ethernet'
+      ? t.statusPanel.ethernet
+      : t.statusPanel.wifiState[status.wifiState]
+  const volumeLabel = status.muted
+    ? t.statusPanel.muted
+    : `${status.volume}%`
+  const iconLabel = `${APP.name}: ${t.statusPanel.battery} ${status.battery}%, ${networkLabel}, ${t.statusPanel.volume} ${volumeLabel}`
 
   return (
     <header className={'lp-menubar' + (scrolled ? ' is-scrolled' : '')}>
@@ -77,19 +85,23 @@ export function MacMenuBar({
       </button>
 
       {/* 主角：Status Trio 就住在系统图标区，紧挨着控制中心。
-          面板展开时按钮保持按下态，和真实的菜单栏高亮一致。 */}
+          面板打开时按钮保持按下态，和真实的菜单栏高亮一致。 */}
       <button
         type="button"
         className="lp-menubar-app"
         ref={iconRef}
-        data-open={settingsOpen}
-        onClick={onToggleSettings}
+        data-open={panelOpen}
+        onClick={onTogglePanel}
         title={`${t.appLabel} — ${t.appHint}`}
         aria-label={`${t.appLabel} — ${t.appHint}`}
-        aria-expanded={settingsOpen}
-        aria-controls="settings-panel"
+        aria-expanded={panelOpen}
+        aria-controls="status-panel"
       >
-        <StatusIcon state={status} size={APP.iconSize} />
+        <StatusIcon
+          state={status}
+          size={status.iconSize}
+          label={iconLabel}
+        />
       </button>
 
       <span className="lp-menubar-sysicon" aria-hidden>

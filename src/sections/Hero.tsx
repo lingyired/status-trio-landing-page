@@ -1,15 +1,18 @@
 import React from 'react'
-import appIcon from '../assets/app-icon.svg'
 import { APP, MIRRORS, RELEASE } from '../app'
+import { AppLogo } from '../components/AppLogo'
 import { useI18n } from '../i18n'
 import { ChangelogDialog } from './ChangelogDialog'
+import { CommunityLinks } from './CommunityLinks'
+import { HomebrewInstall } from './HomebrewInstall'
 import { AppleMark, BaiduMark, ClockMark, GitHubMark, QuarkMark } from './icons'
+import { reportDownloadClick } from '../stats'
 
 /** 首屏：品牌 + 一句话定位 + 下载入口。
  *  用 memo 包住：status（图标状态）由页面根持有，控制台滑杆每动一格都会让根重渲染，
  *  而这里读的全是常量 —— memo 把这些与它无关的更新挡在外面。 */
 export const Hero = React.memo(function Hero() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const h = t.hero
   /** 更新日志弹层：版本号徽标点开 */
   const [changelogOpen, setChangelogOpen] = React.useState(false)
@@ -18,7 +21,7 @@ export const Hero = React.memo(function Hero() {
   return (
     <section className="sec hero">
       <div className="hero-brand">
-        <img className="hero-icon" src={appIcon} width={54} height={54} alt="" draggable={false} />
+        <AppLogo size={54} className="hero-icon" />
         <span className="hero-brand-name">{APP.name}</span>
         <span className="hero-brand-tag">{h.eyebrow}</span>
       </div>
@@ -26,39 +29,46 @@ export const Hero = React.memo(function Hero() {
       <h1 className="hero-title">{h.title}</h1>
       <p className="hero-desc">{h.desc}</p>
 
-      <div className="hero-cta">
-        <a className="btn btn--primary" href={RELEASE.dmg} target="_blank" rel="noreferrer">
-          <AppleMark size={15} />
-          <span className="btn-body">
-            <span className="btn-main">{h.ctaPrimary}</span>
-            <span className="btn-sub">
-              {RELEASE.tag} · {RELEASE.size}
+      <div className="hero-install">
+        <div className="hero-cta">
+          <a className="btn btn--primary" href={RELEASE.dmg} target="_blank" rel="noreferrer">
+            <AppleMark size={15} />
+            <span className="btn-body">
+              <span className="btn-main">{h.ctaPrimary}</span>
+              <span className="btn-sub">
+                {RELEASE.tag} · {RELEASE.size}
+              </span>
             </span>
-          </span>
-        </a>
-        <a className="btn btn--ghost" href={APP.repo} target="_blank" rel="noreferrer">
-          <GitHubMark size={16} />
-          <span className="btn-body">
-            <span className="btn-main">{h.ctaSecondary}</span>
-          </span>
-        </a>
-        {/* 国内网盘镜像：与下方「系统要求」段同一份链接，只有中文文案带这段 */}
-        {t.mirrors && (
-          <>
-            <a className="btn btn--ghost" href={MIRRORS.quark} target="_blank" rel="noreferrer">
-              <QuarkMark size={16} />
-              <span className="btn-body">
-                <span className="btn-main">{t.mirrors.quark}</span>
-              </span>
-            </a>
-            <a className="btn btn--ghost" href={MIRRORS.baidu} target="_blank" rel="noreferrer">
-              <BaiduMark size={16} />
-              <span className="btn-body">
-                <span className="btn-main">{t.mirrors.baidu}</span>
-              </span>
-            </a>
-          </>
-        )}
+          </a>
+          <a className="btn btn--ghost" href={APP.repo} target="_blank" rel="noreferrer">
+            <GitHubMark size={16} />
+            <span className="btn-body">
+              <span className="btn-main">{h.ctaSecondary}</span>
+            </span>
+          </a>
+          {/* 国内网盘镜像：与下方「系统要求」段同一份链接，只有中文文案带这段 */}
+          {t.mirrors && (
+            <>
+              <a className="btn btn--ghost" href={MIRRORS.quark} target="_blank" rel="noreferrer" onClick={() => reportDownloadClick('quark')}>
+                <QuarkMark size={16} />
+                <span className="btn-body">
+                  <span className="btn-main">{t.mirrors.quark}</span>
+                  <span className="btn-sub">{t.mirrors.versionUnverified}</span>
+                </span>
+              </a>
+              <a className="btn btn--ghost" href={MIRRORS.baidu} target="_blank" rel="noreferrer" onClick={() => reportDownloadClick('baidu')}>
+                <BaiduMark size={16} />
+                <span className="btn-body">
+                  <span className="btn-main">{t.mirrors.baidu}</span>
+                  <span className="btn-sub">{t.mirrors.versionUnverified}</span>
+                </span>
+              </a>
+            </>
+          )}
+        </div>
+
+        <HomebrewInstall />
+        {lang === 'zh' ? <CommunityLinks /> : null}
       </div>
 
       <div className="hero-verline">

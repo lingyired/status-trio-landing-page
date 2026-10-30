@@ -25,9 +25,11 @@ const SHOTS = {
   dockDark: { src: './screenshots/dock-dark.webp', w: 1440, h: 810 },
   dockLight: { src: './screenshots/dock-light.webp', w: 1440, h: 810 },
   dockBt: { src: './screenshots/dock-bt.webp', w: 1440, h: 810 },
-  dockIcons: { src: './screenshots/dock-icons.webp', w: 1400, h: 752 },
-  iconStates: { src: './screenshots/icon-states.webp', w: 1788, h: 1844 },
-  iconStatesDark: { src: './screenshots/icon-states-dark.webp', w: 1788, h: 1844 },
+  dockIcons: { src: './screenshots/dock-icons.webp', w: 1400, h: 1466 },
+  iconStates: { src: './screenshots/icon-states.webp', w: 1788, h: 2184 },
+  iconStatesDark: { src: './screenshots/icon-states-dark.webp', w: 1788, h: 2184 },
+  menubarAirpods: { src: './screenshots/menubar-airpods.webp', w: 1440, h: 720 },
+  menubarWifi: { src: './screenshots/menubar-wifi.webp', w: 1440, h: 720 },
 } satisfies Record<string, Shot>
 
 export const Screenshots = React.memo(function Screenshots({ theme }: { theme: ThemePref }) {
@@ -65,6 +67,11 @@ export const Screenshots = React.memo(function Screenshots({ theme }: { theme: T
     shot: theme === 'light' ? SHOTS.iconStates : SHOTS.iconStatesDark,
     caption: s.captions.iconStates,
   }
+
+  const popover = [
+    { shot: SHOTS.menubarAirpods, caption: s.captions.menubarAirpods },
+    { shot: SHOTS.menubarWifi, caption: s.captions.menubarWifi },
+  ]
 
   const card = ({ shot, caption }: { shot: Shot; caption: string }) => (
     <div className="shot" key={shot.src}>
@@ -104,6 +111,11 @@ export const Screenshots = React.memo(function Screenshots({ theme }: { theme: T
       <div className="shot-group">
         <h3 className="shot-group-label">{s.statesGroup}</h3>
         <div className="shot-stack">{card(statesShot)}</div>
+      </div>
+
+      <div className="shot-group">
+        <h3 className="shot-group-label">{s.popoverGroup}</h3>
+        <div className="shot-stack">{popover.map(card)}</div>
       </div>
 
       {zoom && (

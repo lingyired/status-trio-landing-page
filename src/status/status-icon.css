@@ -11,6 +11,12 @@
   --sti-critical: #ff3b30;
   --sti-warning: #f2b900;
   --sti-charging: #34c759;
+  /* 蓝牙音频蓝：对齐 App 的 bluetoothBlueOnDark / OnLight */
+  --sti-bt: #4da3ff;
+}
+
+[data-theme='light'] .sti {
+  --sti-bt: #0066cc;
 }
 
 /* 数字与闪电的描边阴影（浅色主题下换白，见 flood-opacity 覆盖） */
@@ -45,6 +51,10 @@
 
 /* ── Wi-Fi ── */
 .sti .sti-wifi-signal {
+  transition: opacity 220ms ease;
+}
+
+.sti .sti-wired {
   transition: opacity 220ms ease;
 }
 
@@ -90,11 +100,56 @@
   fill: var(--sti-muted);
 }
 
-/* ── 音量（四段通用指示器）── */
+/* ── 蓝牙音频接管 ──
+   [data-replaced] 由 StatusIcon 按「btDevice 开且网络非异常态」写入；
+   三组图形互斥淡入淡出，与 App 的替换行为一致。 */
+.sti .sti-wifi-overlays {
+  transition: opacity 220ms ease;
+}
+
+.sti .sti-bt-device {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.sti .sti-wifi[data-replaced='true'] .sti-wifi-signal,
+.sti .sti-wifi[data-replaced='true'] .sti-wifi-overlays {
+  opacity: 0;
+}
+
+.sti .sti-wifi[data-replaced='true'] .sti-bt-device {
+  opacity: 1;
+}
+
+/* ── 音量（四段通用指示器 / 连续弧）── */
 .sti .sti-level [data-index] {
   transition: fill 260ms ease;
 }
 
+/* 蓝牙音频播放时音量点亮段变蓝（is-bt-volume 由 btVolumeColor 写入）；
+   :not(.is-muted) 让未点亮段维持灰色弱化态 */
+.sti.is-bt-volume .sti-level [data-index]:not(.is-muted),
+.sti.is-bt-volume .sti-volume-fill {
+  fill: var(--sti-bt);
+  stroke: var(--sti-bt);
+}
+
 .sti .sti-level [data-index].is-muted {
   fill: var(--sti-muted);
+}
+
+.sti .sti-volume-track {
+  stroke: var(--sti-muted);
+}
+
+.sti .sti-volume-fill {
+  stroke: var(--sti-ink);
+  transition:
+    stroke 240ms ease,
+    stroke-dasharray 260ms ease,
+    opacity 140ms ease;
+}
+
+.sti .sti-input-source {
+  transition: opacity 180ms ease;
 }

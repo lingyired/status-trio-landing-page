@@ -31,7 +31,10 @@ python3 - "$tmp" "$out" <<'PY'
 import json, sys
 
 raw, out = sys.argv[1], sys.argv[2]
-releases = [r for r in json.load(open(raw)) if r.get('tag_name') and not r.get('prerelease')]
+releases = [
+    r for r in json.load(open(raw))
+    if r.get('tag_name') and not r.get('draft') and not r.get('prerelease')
+]
 # 新 → 旧；弹层第一条就是最新版
 releases.sort(key=lambda r: r.get('published_at') or '', reverse=True)
 notes = [

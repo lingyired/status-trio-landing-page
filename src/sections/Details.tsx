@@ -2,7 +2,9 @@ import React from 'react'
 import { APP, MIRRORS, RELEASE } from '../app'
 import { useI18n } from '../i18n'
 import { AlertMark, AppleMark, DownloadMark, GitHubMark } from './icons'
+import { reportDownloadClick } from '../stats'
 import { Troubleshoot } from './Troubleshoot'
+import { HomebrewInstall } from './HomebrewInstall'
 
 /** 隐私说明 + 系统要求（含下载收尾）+ 页脚。
  *  用 memo 包住：子树最重（内含 Troubleshoot 的两张排障卡片），读的又全是常量，
@@ -43,6 +45,8 @@ export const Details = React.memo(function Details() {
           </pre>
         </div>
 
+        <HomebrewInstall variant="full" />
+
         <div className="req-cta">
           <a className="btn btn--primary btn--lg" href={RELEASE.dmg} target="_blank" rel="noreferrer">
             <AppleMark size={16} />
@@ -65,17 +69,18 @@ export const Details = React.memo(function Details() {
         {t.mirrors && (
           <div className="req-mirrors">
             <span className="req-mirrors-label">{t.mirrors.label}</span>
-            <a className="req-mirror" href={MIRRORS.quark} target="_blank" rel="noreferrer">
+            <a className="req-mirror" href={MIRRORS.quark} target="_blank" rel="noreferrer" onClick={() => reportDownloadClick('quark')}>
               <DownloadMark size={14} />
               {t.mirrors.quark}
             </a>
-            <a className="req-mirror" href={MIRRORS.baidu} target="_blank" rel="noreferrer">
+            <a className="req-mirror" href={MIRRORS.baidu} target="_blank" rel="noreferrer" onClick={() => reportDownloadClick('baidu')}>
               <DownloadMark size={14} />
               {t.mirrors.baidu}
               <span className="req-mirror-code">
                 {t.mirrors.code} {MIRRORS.baiduCode}
               </span>
             </a>
+            <span className="req-mirror-note">{t.mirrors.versionNote}</span>
           </div>
         )}
       </section>

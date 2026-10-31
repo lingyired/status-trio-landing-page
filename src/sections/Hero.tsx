@@ -53,14 +53,14 @@ export const Hero = React.memo(function Hero() {
                 <QuarkMark size={16} />
                 <span className="btn-body">
                   <span className="btn-main">{t.mirrors.quark}</span>
-                  <span className="btn-sub">{t.mirrors.versionUnverified}</span>
+                  <span className="btn-sub">{t.mirrors.versionLabel}</span>
                 </span>
               </a>
               <a className="btn btn--ghost" href={MIRRORS.baidu} target="_blank" rel="noreferrer" onClick={() => reportDownloadClick('baidu')}>
                 <BaiduMark size={16} />
                 <span className="btn-body">
                   <span className="btn-main">{t.mirrors.baidu}</span>
-                  <span className="btn-sub">{t.mirrors.versionUnverified}</span>
+                  <span className="btn-sub">{t.mirrors.versionLabel}</span>
                 </span>
               </a>
             </>

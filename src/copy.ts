@@ -45,18 +45,17 @@ export interface MirrorsCopy {
   quark: string
   baidu: string
   code: string
-  versionUnverified: string
+  versionLabel: string
   versionNote: string
 }
 
 const mirrorsZh: MirrorsCopy = {
-  label: '下载慢？国内网盘保留原链接，但 1.8.0 镜像尚未核对：',
+  label: 'GitHub 下载慢？也可以通过国内网盘下载：',
   quark: '夸克网盘',
   baidu: '百度网盘',
   code: '提取码',
-  versionUnverified: '1.8.0 未核对',
-  versionNote:
-    '1.8.0 镜像尚未核对；链接仍保留，下载前请确认文件名是 StatusTrio-1.8.0.dmg，并对照官方 SHA-256。',
+  versionLabel: 'v1.8.0',
+  versionNote: '请下载 StatusTrio-1.8.0.dmg；百度网盘提取码已包含在链接中。',
 }
 
 /** 菜单栏里那两个 Fund01 联动分组的文案。同样只有中文页展示（见 `en.fund01 = null`）。

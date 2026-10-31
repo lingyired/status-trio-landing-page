@@ -45,7 +45,6 @@ export interface MirrorsCopy {
   quark: string
   baidu: string
   code: string
-  versionLabel: string
   versionNote: string
 }
 
@@ -54,7 +53,6 @@ const mirrorsZh: MirrorsCopy = {
   quark: '夸克网盘',
   baidu: '百度网盘',
   code: '提取码',
-  versionLabel: 'v1.8.0',
   versionNote: '请下载 StatusTrio-1.8.0.dmg；百度网盘提取码已包含在链接中。',
 }
 

@@ -1,76 +1,79 @@
-# 页面结构 / 浮动面板几何
+# 页面结构 / 状态面板几何
 
 `status-trio-landing-page` 的布局细则；编号与 `MEMORY.md` 的「硬约定」保持连续（14–19）。
 
-14. **页面结构**：菜单栏下浮设置面板 → Hero → Features（**只剩一句**「一个图标三个状态：
-    Wi-Fi、电池、音量」，渲染成 `h2.sec-title`）→ 尺寸预览 card（`.pv-row` = 卡片 + 面板落位槽）
-    → Details。面板 = `sections/SettingsDock.tsx`（定位/落位/开合/尺寸上报）+
-    `SettingsPanel.tsx`（三列控件），**宽屏默认展开、点菜单栏图标开合**。
+14. **页面结构**（2026-09-27 大改版后）：菜单栏下浮**状态面板**（`sections/StatusPanel.tsx`
+    = App 真机弹层的 mock，摆位在 `StatusDock.tsx`）→ Hero → Features → 尺寸预览 card
+    （`.pv-row` = 卡片 + **常驻设置控件** `SettingsPanel`）→ Details。
+    - 状态面板点菜单栏图标开合（宽屏默认开、窄屏默认收，`NARROW` 断点定），
+      内容对齐 App 弹层：电池 / Wi-Fi / 系统代理 / 蓝牙设备列表（可收起，本地 useState）/
+      音量输出（滑杆**绑定真 state.volume**，步进 25）/ 麦克风（输入电平是本地 useState
+      演示态）/ 页脚（设置… + `RELEASE.tag.slice(1)`）。绑定量：battery、
+      charging/lowPower 文案、`wifi === 0` 整行置灰、volume；设备名是真机快照（copy.ts
+      `statusPanel` 段，zh/en）。
+    - 设置控件不再浮在菜单栏下：固定在「菜单栏实际尺寸」卡右侧（`.pv-slot`），
+      窄屏退到卡片下面整宽。三列 `.pg-cols` + 跨三列「蓝牙音频」组 `pg-group--wide` 不变。
     - `.lp-column` 必须 `display: flex`（column）—— **grid item 的包含块是自己那一行，
       `position: sticky` 会失效**。
-    - 功能三张小卡（`.feat-grid` / `.feat` / `.feat-icon` / `.feat-text`）与 `FeatureIcon` /
-      `FeatureIconKey` / `FeatureItem` **已删，别照旧记忆加回来**。
     - ⚠️ `sections/icons.tsx` 里 `AppleMark` / `GitHubMark` / `DownloadMark` / `AlertMark` /
       `CopyMark` / `MenuBarMark` / `CopyButton` 仍被 Hero / Details / Troubleshoot 使用，
       **整文件不能删**。
 
-15. **浮动面板的定位与宽度**：
-    - 定位在 JS 算（`SettingsDock.sync()`），写进 **`translate`**（不是 `transform`：收起动画的
-      transform 要留着，独立属性才互不覆盖）。停靠位 = 图标中心对面板中心，再夹进视口 12px
-      白边；图标贴屏幕右边没法让，故顶上用 `.pg-caret` 尖角指回图标（caret 夹 `[24, 宽-24]`）。
-      量宽度必须用 `offsetWidth`（收起态 scale 会污染 rect）。
-    - 重算时机：**无依赖 `useLayoutEffect`** + body `ResizeObserver` + 滚动区 `scroll`（rAF
-      合帧）+ `window.resize` + **菜单栏 `MutationObserver`**（时钟/语言变会让图标平移）。
-      滚动帧里只写样式、不动 React state。
-    - **宽度贴内容、非定值**：`.pg-dock-body { width: max-content; max-width: min(100%, 700px) }`
-      + `.pg-cols { grid-template-columns: repeat(3, auto) }` → 实测中文 592 / 英文 688。
-      ⚠️ 别把 `.pg-cols` 改回等分 `1fr`，也别把 `.ctl-segmented` 改回 `minmax(0, 1fr)` 五等分
-      （最长文案会变成面板宽度下限，840px 就这么来的）。`.pg-hint` 的 `max-width: 9.5rem` 同理。
+15. **状态面板的定位与宽度**：
+    - 定位在 JS 算（`StatusDock.sync()`），只算水平位移写进 **`translate`**（不是
+      `transform`：收起动画的 transform 要留着，独立属性才互不覆盖）。停靠位 = 图标中心
+      对面板中心，再夹进视口 12px 白边；图标贴屏幕右边没法让，故顶上用 `.pg-caret` 尖角
+      指回图标（caret 夹 `[24, 宽-24]`）。量宽度必须用 `offsetWidth`（收起态 scale 会污染 rect）。
+    - **sticky 钉住**（2026-09-27 ling 拍板：「popup 是浮动的，随滚动下拉位置不变」）：
+      `.pg-dock { position: sticky; top: 0 }`，往下滚面板钉在滚动区顶部不动、盖在正文上；
+      JS 无滚动监听。**窄屏 860 内退回 `position: relative`**（钉住会吃掉大半屏）。
+      ⚠️ **sticky 生效的前提：`.lp-column { align-self: flex-start }` 不能删** —— 外层
+      `.lp-desktop` 是横排 flex，默认 stretch 会把列盒子拉伸到视口高、内容全变溢出；
+      sticky 活动范围 = 包含块盒子 = 那一屏 → 面板钉满一屏就被推走（2026-09-27 实测踩坑，
+      旧 JS 逐帧摆位时代被掩盖）。flex-start 让列盒子 = 内容高，面板才能钉到文档末尾。
+      重算时机：无依赖 `useLayoutEffect` + body `ResizeObserver` + `window.resize` +
+      **菜单栏 `MutationObserver`**（时钟/语言变会让图标平移）。
+    - **内部滚动兜底**：`.sp { max-height: calc(100vh - 3rem); overflow-y: auto }`——sticky
+      钉死后比视口高的部分永远滚不出来（真弹层也是内部滚）；窄屏 `max-height: none`
+      （文档流里整页滚）。⚠️ **绝不能加 `overscroll-behavior: contain`**（2026-09-27 实测踩坑）：
+      面板浮在视口上方、滚轮大概率悬在它上面，一旦它成可滚容器，滚轮先喂它，contain 会在
+      面板滚到头后掐断滚动链 → 整页「滚一会儿就滚不动了」。默认链式滚动即可，面板到头
+      自动接力给整页。（更新日志弹层 `.cl-panel` 的 contain 是模态框，正常，别误删。）
+    - **宽度定值 336px**（`.sp`），不贴内容走——设备名长短不一，贴内容会跟着快照文案抖；
+      窄屏 `width: 100%`。
 
-16. **滚动落位：面板滑到「菜单栏实际尺寸」卡右侧**（一份 DOM、两个落位，位置由滚动进度插值）：
-    停靠（菜单栏下对准图标）→ 落位（`MenubarPreview` 的 `.pv-slot`）。
-    - **落位线不能放菜单栏下沿**（`LOCK_DEPTH = 340`）：放视口头 340px 处，「滚到卡片跟前停下」
-      就已经并排。
-    - **缓动必须 smoothstep**（`t = p²(3-2p)`，`TRAVEL = 320`）：两端速度 0，起步接得上停靠态
-      静止、落定接得上随行态 1:1（线性插值落定处速度 0.06 会梗）。逐像素验算：最大跳变
-      1.0px、速度突变 0.038。
-    - **槽宽来自实测**：`--panel-w` 由 `SettingsDock` 量 `offsetWidth` 经 `LandingPage` 传
-      `MenubarPreview`；`.pv-row` 是 `minmax(0,1fr) var(--panel-w)`，**闸门 `@media
-      (min-width: 1024px)`** 才空槽（英文面板 688 + 卡片 ≥200）。放不下时 `.pv-slot` 是
-      `display: none` → 宽 0 → `sync()` 判不可用、保持停靠；`toggleSettings()` 的「面板在视野外
-      先滚过去」一并兜住。
-    - **卡片竖排**（标签 → 条带 → 说明 → 大图），大图/光晕 `min(216px,100%)` / `min(300px,82%)`，
-      否则卡片被挤到 220px 会顶出边界。
-    - 面板随卡片滚出视野时给 `translate` 兜底（`minY`）+ 摘 `visibility`（免得离屏跑
-      backdrop-filter、Tab 走到看不见的控件）。
+16. **设置控件落位（旧「滚动落位」已废，勿复活）**：曾经设置面板随滚动滑到预览卡右侧
+    （smoothstep 插值 / `LOCK_DEPTH` / `TRAVEL` / 量宽量高上报那套），2026-09-27 起控件
+    **常驻** `.pv-slot`，`SettingsDock` 的落位与尺寸上报代码已删（`panelWidth`/`panelHeight`
+    state、`slotRef`、`onWidth`/`onHeight` 都没了）。
+    - `.pv-row` 默认一列（控件排卡片下面整宽）；`@media (min-width: 1024px)` 才
+      `minmax(0,1fr) minmax(0,700px)` 并排。⚠️ **第二列不能用 `auto` 轨道**：grid 取尺寸时
+      auto 按 max-content **先于 fr 轨道**，面板没了旧浮动时代的 700px 上限会一路撑到 900+，
+      把卡片挤成一条竖字（2026-09-27 实测）。700 = 旧浮动面板的宽度上限；1280 视口下
+      卡片 = 220（下限），视口更宽卡片更大。
+    - **等高靠 grid 拉伸**（行高 = 较高一方；闸门内 `.pv-slot` `display:flex` +
+      `.pg-panel { flex: 1 1 auto }`），卡片大图栏 `.pg-hero { flex: 1 1 auto }` 吸收差值。
+      **没有 JS 量高了**（`--panel-w` / `--panel-h` 变量已删）。
+    - 卡片 head 是 `.pg-preview-head`（flex + wrap + baseline），caption 靠
+      `margin-left: auto` 右对齐；英文 caption 在窄卡里折第二行属预期。
 
-17. **窄屏断点 860px 是两处硬编码，改一处必须同步另一处**：`LandingPage.tsx` 的 `NARROW` 常量
-    （面板默认开合）与 `landing.css` 里 `.pg-dock` 的媒体查询（`sticky` → `relative`，面板退回
-    文档流）。落位那道 `min-width: 1024px` 只写在 CSS，JS 靠「槽宽够不够」自判。
+17. **窄屏断点 860px 仍两处硬编码，改一处必须同步另一处**：`LandingPage.tsx` 的 `NARROW`
+    常量（面板默认开合）与 `landing.css` 的 860 媒体查询（`.pg-dock-body` / `.sp` 全宽、
+    `.pg-cols` 单列、分组分隔线转横向）。`min-width: 1024px` 的并排闸门只写在 CSS。
 
-18. **预览卡与设置面板等高**：面板 `offsetHeight` 经 `SettingsDock.reportSize()` → `onHeight`
-    → `LandingPage.panelHeight` → `MenubarPreview` 写 `--panel-h`；卡片 `height: var(--panel-h,
-    auto)` **只写在 `@media (min-width: 1024px)`**（与落位槽同闸门）。全局 `box-sizing:
-    border-box` → 对齐误差 0。首帧没量到就不写该变量（`panelHeight ? … : undefined`），退回
-    `auto` 不塌。
-    - 卡片 `display: flex; flex-direction: column` + `.pg-hero { flex: 1 1 auto }`：等高后多出/
-      差掉的高度整块落在大图栏。**别改回 grid**（auto 行会均摊空隙，标签与条带间被撑开）。
-    - head 是 `.pg-preview-head`（flex + `flex-wrap: wrap` + `align-items: baseline`），caption
-      用 `margin-left: auto; text-align: right` 做「float right」。⚠️ **`.pg-preview` 是
-      grid/flex 容器时子元素 `float` 被忽略**（float 不适用于 grid/flex item）。英文文案
-      （304px）在卡片内宽 195px 里必折第二行，属预期。
+18. （原「JS 量高对齐」一条已并入 16，编号空缺保留连续性）
 
 19. **首屏与面板「并排 / 占位」两态**：首屏顶端与面板顶端**严格齐平**（都 26px），首屏只占
     面板左边的空档。
-    - 判定在 `SettingsDock.sync()` 第 ③ 步：`freeLeft = dockDx - HERO_GAP(28)`，
-      `lifted = !full && freeLeft >= MIN_HERO_W(380)`。**`full` 同时就是「窄屏」**（≤860 时面板
-      `width: 100%`），所以 860 没有第三处硬编码。门槛：中文视口 ≥1091 / 英文 ≥1283。
+    - 判定在 `StatusDock.sync()`：`freeLeft = dx - HERO_GAP(28)`，
+      `lifted = !full && freeLeft >= MIN_HERO_W(380)`。**`full` 同时就是「窄屏」**（≤860 时
+      面板 `width: 100%`）。面板窄了（336px）之后并排门槛比旧设置面板时代宽松得多。
     - 写入全部命令式：`dock.style.height`（并排时 0）、`dock.dataset.lifted`、
       `dock.parentElement.style.setProperty('--hero-w', …)`；`liftKeyRef` 挡重复写。
     - `.hero { max-width: var(--hero-w, none) }`。⚠️ **该宽度 CSS 算不出来**（面板夹的是
       **视口**右边 12px，不在内容列右缘），只能 JS 实测给。
     - 占位槽高度**只能命令式写**：`.pg-dock` 上不能再有 React 的 `style={{height}}`（React
-      下次渲染会清掉未列出的内联属性，互相覆盖）。配套已删只服务于它的 `panelHeight` state。
+      下次渲染会清掉未列出的内联属性，互相覆盖）。
     - `.pg-dock[data-lifted=true] { margin-bottom: calc(-1 * var(--col-gap)) }`（≥861px）抵消
       「占位槽 → 首屏」那道 flex gap；`--col-gap` 定义在 `.lp-column`，与 `gap` 同源。
     - 首屏顶端对齐靠 `.hero { padding-top: 10px }` —— **与 `TOP_GAP` 同值**（`.pg-dock-body`
